@@ -1,0 +1,26 @@
+import React, { useState, useEffect } from 'react';
+// const axios = require('axios');
+import axiosInstance from "../utils/axiosApi";
+
+export default function GetApiRequest(url) {
+  const [data, setData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = () => {
+      axiosInstance
+        .get(url)
+        .then((response) => {
+          setIsLoaded(true);
+          setData(response.data);
+        })
+        .catch((error) => {
+          setError(error);
+        });
+    };
+    fetchData();
+  }, [url]);
+
+  return { error, isLoaded, data };
+};
