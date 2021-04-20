@@ -66,7 +66,7 @@ class PostDetail(Resource):
         
         # modify post
         post.title = data['title']
-        post.text = data['title']
+        post.text = data['text']
         session.commit()
 
         # return post

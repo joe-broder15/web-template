@@ -31,9 +31,7 @@ export default function PostCreate() {
           } else {
             alert("fail");
           }
-          setTitle("");
-          setDescription("");
-          setConfirm(false);
+          history.push("/");
         })
         .catch((error) => {
           alert(error);
