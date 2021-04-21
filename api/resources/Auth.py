@@ -2,7 +2,7 @@ from flask_restful import Resource
 from flask import request
 from sqlalchemy.sql.expression import text
 from marshmallow import ValidationError
-from models.Models import User, BlackListToken, DBSession
+from models.Models import User, UserProfile, BlackListToken, DBSession
 from serializers.Serializers import UserSchema
 from http import HTTPStatus
 import jwt
@@ -73,11 +73,14 @@ class UserResource(Resource):
             # hash serialized password using bcrypt
             pw_hash = generate_password_hash(data['password'], 10)
             user = User(username=data['username'], password_hash=pw_hash, email=data['email'])
+            profile = UserProfile(username=data['username']);
+
         except:
             return {"errors": "bad credentials"}, HTTPStatus.BAD_REQUEST
         
         # add user to db
         session.add(user)
+        session.add(profile)
         session.commit()
 
         # return new ceated user

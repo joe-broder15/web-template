@@ -1,7 +1,8 @@
 from marshmallow import (Schema, fields, post_dump, post_load, pre_load,
                          validate, ValidationError)
-from sqlalchemy.sql.expression import true
+from sqlalchemy.sql.expression import false, true
 import re
+
 
 # validation functions
 def must_not_be_blank(data):
@@ -52,6 +53,7 @@ class UserProfileSchema(Schema):
     birthday = fields.DateTime(required=False)
     avatar = fields.String(required=False)
     cover = fields.String(required=False)
+    private = fields.Boolean(required=False)
     
     class Meta:
         ordered = True

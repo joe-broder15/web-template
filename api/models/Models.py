@@ -3,10 +3,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, DateTime
+from sqlalchemy import Column, Integer, DateTime, Boolean
 import datetime
 
-from sqlalchemy.sql.expression import true
+from sqlalchemy.sql.expression import false, true
+# from typing_extensions import Required
 
 
 Base = declarative_base()
@@ -31,6 +32,7 @@ class UserProfile(Base):
     gender = Column(String(60), nullable=True)
     avatar = Column(String(250), nullable=True)
     cover = Column(String(250), nullable=True)
+    private = Column(Boolean(), nullable=false, default=0);
 
 
 # post model
