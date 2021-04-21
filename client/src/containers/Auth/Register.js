@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import GetApiRequest from "../../hooks/GetApiRequest";
 import axiosInstance from "../../utils/axiosApi";
 import { useHistory } from "react-router-dom";
+import { Container, Row, Card, Col, Form, Button } from "react-bootstrap";
 
 export default function Register(props) {
   let history = useHistory();
@@ -12,7 +12,12 @@ export default function Register(props) {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    if (email == "" || password == "" || password != confirm || username =="") {
+    if (
+      email == "" ||
+      password == "" ||
+      password != confirm ||
+      username == ""
+    ) {
       alert("please do not leave any fields blank");
       return;
     }
@@ -41,61 +46,58 @@ export default function Register(props) {
   };
 
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-lg-8 ">
-          <h1>Register</h1>
-        </div>
-      </div>
-      <div className="row justify-content-center">
-        <div className="col-lg-8 ">
-          <form onSubmit={(event) => handleSubmit(event)}>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label">
-                Email
-              </label>
-              <input
-                class="form-control"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label">
-                Username
-              </label>
-              <input
-                class="form-control"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-              />
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">
-                Password
-              </label>
-              <input
-                class="form-control"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">
-                Confirm Password
-              </label>
-              <input
-                class="form-control"
-                value={confirm}
-                onChange={(event) => setConfirm(event.target.value)}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+    <Container>
+      <Row>
+        <Col>
+          <Row className="justify-content-md-center">
+            <Col md="8">
+              <h1>Register</h1>
+              <Card>
+                <Card.Body>
+                  <Form onSubmit={(event) => handleSubmit(event)}>
+                    <Form.Group>
+                      <Form.Label>Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                      />
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                      <Form.Label>Username</Form.Label>
+                      <Form.Control
+                        value={username}
+                        onChange={(event) => setUsername(event.target.value)}
+                      />
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                      />
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                      <Form.Label>Confirm Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        value={confirm}
+                        onChange={(event) => setConfirm(event.target.value)}
+                      />
+                    </Form.Group>
+                    <br />
+                    <Button type="submit">Submit</Button>
+                  </Form>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
   );
 }
