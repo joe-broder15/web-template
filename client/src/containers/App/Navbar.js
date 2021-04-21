@@ -13,7 +13,7 @@ import Logout from "../Auth/Logout";
 import AuthContext from "../../contexts/AuthContext";
 
 export default function Navbar() {
-  const { authState, setAuthState } = React.useContext(AuthContext);
+  const {authState, setAuthState, userState, setUserState} = React.useContext(AuthContext);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -58,7 +58,11 @@ export default function Navbar() {
                 <li className="nav-item">
                   <Logout />
                 </li>
+                <li className="nav-item">
+                  {userState.username}
+                </li>
               </Fragment>
+              
             ) : (
               <Fragment>
                 <li className="nav-item">

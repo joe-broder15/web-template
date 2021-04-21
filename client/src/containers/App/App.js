@@ -22,10 +22,11 @@ import AuthContext from "../../contexts/AuthContext";
 
 export default function App() {
   const [authState, setAuthState] = useState(false);
-  LoginHook(authState, setAuthState);
+  const [userState, setUserState] = useState(null);
+  LoginHook(authState, setAuthState, userState, setUserState);
   // check if a token exists in memory, if so log in
   return (
-    <AuthContext.Provider value={{ authState, setAuthState }}>
+    <AuthContext.Provider value={{authState, setAuthState, userState, setUserState}}>
       <Router>
         <Navbar />
         <div>
