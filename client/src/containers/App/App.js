@@ -15,7 +15,7 @@ import PostEdit from "../Posts/PostEdit";
 import Login from "../Auth/Login";
 import Register from "../Auth/Register";
 import Logout from "../Auth/Logout";
-import Navbar from "./Navbar";
+import AppNavbar from "./AppNavbar";
 import LoginHook from "../../hooks/LoginHook";
 
 import AuthContext from "../../contexts/AuthContext";
@@ -28,7 +28,7 @@ export default function App() {
   return (
     <AuthContext.Provider value={{authState, setAuthState, userState, setUserState}}>
       <Router>
-        <Navbar />
+        <AppNavbar />
         <div>
           <Switch>
             <Route path="/post">

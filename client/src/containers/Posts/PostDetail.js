@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react";
 import GetApiRequest from "../../hooks/GetApiRequest";
 import AuthContext from "../../contexts/AuthContext";
 import { Link, useParams } from "react-router-dom";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  ListGroup,
+  Button,
+  Spinner,
+} from "react-bootstrap";
 
 export default function PostDetail(props) {
   let { postId } = useParams();
@@ -15,55 +24,74 @@ export default function PostDetail(props) {
   // wait for load
   if (!isLoaded) {
     return (
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
+      <Spinner animation="border" role="status">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
     );
   }
   // display information about a post
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <h1>Viewing Post {data.id}</h1>
-        </div>
-      </div>
-      <dl class="row justify-content-center">
-        <div className="col-lg-8">
-          <div className="card">
-            <div className="card-body">
-              <div className="row">
-                <dt class="col-sm-3">Title</dt>
-                <dd class="col-sm-9">{data.title}</dd>
-
-                <dt class="col-sm-3">Description</dt>
-                <dd class="col-sm-9">{data.text}</dd>
-
-                <dt class="col-sm-3">Created</dt>
-                <dd class="col-sm-9">{data.created_date}</dd>
-
-                <dt class="col-sm-3">Created By:</dt>
-                <dd class="col-sm-9">{data.user}</dd>
-              </div>
+    <Container>
+      <Row>
+        <Col>
+          <Row className="justify-content-md-center">
+            <Col md="8">
+              <h1>Viewing Post {data.id}</h1>
+              <Card>
+                <Card.Body>
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <Row>
+                        <Col sm="2">
+                          <b>Title:</b>
+                        </Col>
+                        <Col>{data.title}</Col>
+                      </Row>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <Row>
+                        <Col sm="2">
+                          <b>Description:</b>
+                        </Col>
+                        <Col>{data.text}</Col>
+                      </Row>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <Row>
+                        <Col sm="2">
+                          <b>Created at:</b>
+                        </Col>
+                        <Col>{data.created_date}</Col>
+                      </Row>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <Row>
+                        <Col sm="2">
+                          <b>Author:</b>
+                        </Col>
+                        <Col>{data.user}</Col>
+                      </Row>
+                    </ListGroup.Item>
+                  </ListGroup>
+                </Card.Body>
+              </Card>
+              <br/>
               {authState ? (
                 // if logged in link to the edit page
-                <div className="row">
-                  <div class="col-sm-3">
-                    <Link
-                      className="btn btn-success"
-                      to={"/post/edit/"+ String(postId)}
-                    >
-                      Edit
+                <Row>
+                  <Col sm="2">
+                    <Link to={"/post/edit/" + String(postId)}>
+                      <Button>Edit</Button>
                     </Link>
-                  </div>
-                </div>
+                  </Col>
+                </Row>
               ) : (
                 ""
               )}
-            </div>
-          </div>
-        </div>
-      </dl>
-    </div>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
   );
 }

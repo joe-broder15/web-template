@@ -25,7 +25,7 @@ export default function Logout() {
   };
 
   return (
-    <a href="#" className="nav-link active" onClick={handleSubmit}>
+    <a onClick={handleSubmit}>
       Logout
     </a>
   );

@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosApi";
 import { useHistory } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
-const axios = require("axios");
+import { Container, Row, Card, Col, Form, Button } from "react-bootstrap";
+
 export default function PostCreate() {
   let history = useHistory();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [confirm, setConfirm] = useState(false);
-  const { authState, setAuthState} = React.useContext(
-    AuthContext
-  )
+  const { authState, setAuthState } = React.useContext(AuthContext);
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (title == "" || description == "" || confirm == false) {
@@ -25,7 +24,6 @@ export default function PostCreate() {
           text: description,
         })
         .then((response) => {
-          // setIsLoaded(true);
           if (response.status == 201) {
             alert("success");
           } else {
@@ -42,59 +40,55 @@ export default function PostCreate() {
 
   // redirect if not authenticated
   useEffect(() => {
-    if(!authState) {
+    if (!authState) {
       history.push("/");
     }
-  })
+  });
 
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-lg-8 ">
-          <h1>Create</h1>
-        </div>
-      </div>
-      <div className="row justify-content-center">
-        <div className="col-lg-8 ">
-          <form onSubmit={(event) => handleSubmit(event)}>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label">
-                Title
-              </label>
-              <input
-                class="form-control"
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-              />
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">
-                Text
-              </label>
-              <textarea
-                class="form-control"
-                rows="9"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-              ></textarea>
-            </div>
-            <div className="mb-3 form-check">
-              <label class="form-label">Confirm</label>
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="exampleCheck1"
-                value={confirm}
-                checked={confirm}
-                onChange={(event) => setConfirm(!confirm)}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+    <Container>
+      <Row>
+        <Col>
+          <Row className="justify-content-md-center">
+            <Col md="8">
+              <h1>Create Post</h1>
+              <Card>
+                <Card.Body>
+                  <Form onSubmit={(event) => handleSubmit(event)}>
+                    <Form.Group>
+                      <Form.Label>Title</Form.Label>
+                      <Form.Control
+                        value={title}
+                        onChange={(event) => setTitle(event.target.value)}
+                      />
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                      <Form.Label>Description</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows="9"
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
+                      />
+                    </Form.Group>
+                    <br />
+                    <Form.Check
+                      type="checkbox"
+                      value={confirm}
+                      checked={confirm}
+                      onChange={(event) => setConfirm(!confirm)}
+                      label={"Confirm"}
+                    />
+                    <br />
+                    <Button type="submit">Submit</Button>
+                  </Form>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
   );
 }

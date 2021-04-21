@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import GetApiRequest from "../../hooks/GetApiRequest";
 import Post from "../../components/Posts/Post";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 
 export default function PostList() {
   // get posts using our GET api hook
-  const { data, error, isLoaded } = GetApiRequest(
-    "/post"
-  );
+  const { data, error, isLoaded } = GetApiRequest("/post");
 
   // check errors
   if (error !== null) {
@@ -15,26 +14,30 @@ export default function PostList() {
   // wait for load
   if (!isLoaded) {
     return (
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
+      <Spinner animation="border" role="status">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
     );
   }
   // render a Post for each item
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <h1>Posts</h1>
-        </div>
-      </div>
-      {data.map((item) => (
-        <div className="row justify-content-center">
-          <div className="col-lg-8 ">
-            <Post data={item} />
-          </div>
-        </div>
-      ))}
-    </div>
+    <Container>
+      <Row>
+        <Col>
+          <Row className="justify-content-md-center">
+            <Col md="8">
+              <h1>Posts</h1>
+              {data.map((item) => (
+                <Row className="justify-content-center">
+                  <Col>
+                    <Post data={item} />
+                  </Col>
+                </Row>
+              ))}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
   );
 }

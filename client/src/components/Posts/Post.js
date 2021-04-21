@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import GetApiRequest from "../../hooks/GetApiRequest";
+import { Card } from "react-bootstrap";
 
 export default function Post(props) {
   return (
-    <div className="card">
-      <div className="card-body">
-        <h5 className="card-title">
-          <Link to={"/post/" + props.data.id}>{props.data.title + props.data.id}</Link>
-        </h5>
-        <p className="card-text">{props.data.text}</p>
-        <b className="card-text">Made By: {props.data.user}</b>
-      </div>
-    </div>
+    <Card>
+      <Card.Body>
+        <Card.Title>
+          <Link to={"/post/" + props.data.id}>
+            {props.data.title + " " + props.data.id}
+          </Link>
+        </Card.Title>
+        <Card.Text>{props.data.text}</Card.Text>
+        <Card.Text>
+          <i>Made By: {props.data.user}</i>
+        </Card.Text>
+      </Card.Body>
+    </Card>
   );
 }
