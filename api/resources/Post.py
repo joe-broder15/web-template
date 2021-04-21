@@ -68,8 +68,6 @@ class PostDetail(Resource):
             data = post_serializer.load(request.get_json())
         except ValidationError as err:
             return {"errors": err.messages}, 422
-        
-        
 
         # modify post
         post.title = data['title']

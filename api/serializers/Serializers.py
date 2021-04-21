@@ -43,3 +43,18 @@ class UserSchema(Schema):
     
     class Meta:
         ordered = True
+
+class UserProfileSchema(Schema):
+    username = fields.String(validate=must_not_be_blank, required=True)
+    name = fields.String(required=False)
+    gender = fields.String(required=False)
+    bio = fields.String(required=False)
+    birthday = fields.DateTime(required=False)
+    avatar = fields.String(required=False)
+    cover = fields.String(required=False)
+    
+    
+    
+    
+    class Meta:
+        ordered = True

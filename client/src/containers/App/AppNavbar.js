@@ -23,7 +23,7 @@ export default function AppNavbar() {
           <Nav.Link>
             <Link to="/">Home</Link>
           </Nav.Link>
-          {authState ? (
+          {authState && userState != null ? (
             <Nav.Link>
               <Link to="/create">Create</Link>
             </Nav.Link>
@@ -39,6 +39,9 @@ export default function AppNavbar() {
               id="collasible-nav-dropdown"
             >
               <NavDropdown.Item href="#action/3.2">
+                <Link to={"/users/" + userState.username}>Profile</Link>
+              </NavDropdown.Item>
+              <NavDropdown.Item>
                 <Logout />
               </NavDropdown.Item>
             </NavDropdown>

@@ -6,6 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, DateTime
 import datetime
 
+from sqlalchemy.sql.expression import true
+
 
 Base = declarative_base()
 
@@ -15,9 +17,21 @@ class User(Base):
     __tablename__ = 'user'
     username = Column(String(20), primary_key=True, unique=True)
     email = Column(String(60), default="post text", nullable=False, unique=True)
-    # password_salt = Column(String(60), default="post text", nullable=False,unique=True)
     password_hash = Column(String(60), default="post text", nullable=False)
     privilege = Column(Integer, nullable=False, default=1)
+
+# user model
+class UserProfile(Base):
+    #define our table
+    __tablename__ = 'user_profile'
+    username = Column(String(20), ForeignKey(User.username), primary_key=True, unique=True)
+    name = Column(String(60), nullable=True)
+    bio = Column(String(250), nullable=True)
+    birthday = Column(DateTime, nullable=True) 
+    gender = Column(String(60), nullable=True)
+    avatar = Column(String(250), nullable=True)
+    cover = Column(String(250), nullable=True)
+
 
 # post model
 class Post(Base):
