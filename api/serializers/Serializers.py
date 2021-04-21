@@ -53,8 +53,5 @@ class UserProfileSchema(Schema):
     avatar = fields.String(required=False)
     cover = fields.String(required=False)
     
-    
-    
-    
     class Meta:
         ordered = True
