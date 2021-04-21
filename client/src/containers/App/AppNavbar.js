@@ -38,12 +38,12 @@ export default function AppNavbar() {
               title={userState.username}
               id="collasible-nav-dropdown"
             >
-              <NavDropdown.Item href="#action/3.2">
-                <Link to={"/users/" + userState.username}>Profile</Link>
-              </NavDropdown.Item>
-              <NavDropdown.Item>
+              <Link to={"/users/" + userState.username}>
+                <NavDropdown.Item>Profile</NavDropdown.Item>
+              </Link>
+
+              
                 <Logout />
-              </NavDropdown.Item>
             </NavDropdown>
           ) : (
             <Fragment>

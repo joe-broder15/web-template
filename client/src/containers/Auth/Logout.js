@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosApi";
 import AuthContext from "../../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
+import {NavDropdown} from "react-bootstrap";
 export default function Logout() {
   const history = useHistory();
   const { authState, setAuthState, userState, setUserState } = React.useContext(
@@ -27,5 +28,5 @@ export default function Logout() {
     logout();
   };
 
-  return <a onClick={handleSubmit}>Logout</a>;
+  return <NavDropdown.Item onClick={handleSubmit}>Logout</NavDropdown.Item>;
 }
