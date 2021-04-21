@@ -25,6 +25,7 @@ export default function App() {
   const [userState, setUserState] = useState(null);
   LoginHook(authState, setAuthState, userState, setUserState);
   // check if a token exists in memory, if so log in
+  
   return (
     <AuthContext.Provider value={{authState, setAuthState, userState, setUserState}}>
       <Router>

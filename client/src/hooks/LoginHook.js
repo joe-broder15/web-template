@@ -11,15 +11,15 @@ export default function TryLogin(authState, setAuthState, userState, setUserStat
         .get("/auth/user")
         .then((response) => {
           if (response.status == 200) {
-            setUserState(response.data);
             setAuthState(true);
+            setUserState(response.data);
           }
         })
         .catch((error) => {
           setError(error);
         });
     };
-    if (localStorage.getItem("access_token") === null || (authState && userState!=null)) {
+    if (localStorage.getItem("access_token") === null || (authState == true && userState!=null)) {
       return;
     }
     fetchData();

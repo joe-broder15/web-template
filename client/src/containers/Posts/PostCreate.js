@@ -9,7 +9,9 @@ export default function PostCreate() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [confirm, setConfirm] = useState(false);
-  const { authState, setAuthState } = React.useContext(AuthContext);
+  const { authState, setAuthState, userState, setUserState } = React.useContext(
+    AuthContext
+  );
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (title == "" || description == "" || confirm == false) {
@@ -40,7 +42,7 @@ export default function PostCreate() {
 
   // redirect if not authenticated
   useEffect(() => {
-    if (!authState) {
+    if (authState == false) {
       history.push("/");
     }
   });

@@ -1,10 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { BrowserRouter as Router, Link } from "react-router-dom";
-import {
-  Navbar,
-  Nav,
-  NavDropdown,
-} from "react-bootstrap";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 
 import Logout from "../Auth/Logout";
 
@@ -17,15 +13,23 @@ export default function AppNavbar() {
 
   return (
     <Navbar bg="dark" variant="dark" expand="md" style={{ padding: "5px" }}>
-      <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+      <Navbar.Brand href="/">Web Template</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse
         id="responsive-navbar-nav"
         className="justify-content-between"
       >
         <Nav className="mr-auto">
-          <Nav.Link href="/">Home</Nav.Link>
-          {authState ? <Nav.Link href="/create">Create</Nav.Link> : ""}
+          <Nav.Link>
+            <Link to="/">Home</Link>
+          </Nav.Link>
+          {authState ? (
+            <Nav.Link>
+              <Link to="/create">Create</Link>
+            </Nav.Link>
+          ) : (
+            ""
+          )}
         </Nav>
         <Nav>
           {/* login controls */}
@@ -33,7 +37,6 @@ export default function AppNavbar() {
             <NavDropdown
               title={userState.username}
               id="collasible-nav-dropdown"
-              menuAlign="right"
             >
               <NavDropdown.Item href="#action/3.2">
                 <Logout />
@@ -41,8 +44,12 @@ export default function AppNavbar() {
             </NavDropdown>
           ) : (
             <Fragment>
-              <Nav.Link href="/login">Login</Nav.Link>
-              <Nav.Link href="/register">Register</Nav.Link>
+              <Nav.Link>
+                <Link to="/login">Login</Link>
+              </Nav.Link>
+              <Nav.Link>
+                <Link to="/register">Register</Link>
+              </Nav.Link>
             </Fragment>
           )}
         </Nav>
