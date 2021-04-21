@@ -58,13 +58,19 @@ class PostDetail(Resource):
             post=session.query(Post).filter(Post.id == post_id).one()
         except:
             return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
-
+        
+        # check if post belongs to the authenticated user
+        if post.user != user_token['username']:
+            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+        
         # serialize inputs
         try:
             data = post_serializer.load(request.get_json())
         except ValidationError as err:
             return {"errors": err.messages}, 422
         
+        
+
         # modify post
         post.title = data['title']
         post.text = data['text']
@@ -76,12 +82,19 @@ class PostDetail(Resource):
     # delete a post
     @token_required
     def delete(self, post_id, user_token):
+
         # delete post
         session = DBSession()
         try:
-            session.query(Post).filter(Post.id == post_id).delete()
+            post=session.query(Post).filter(Post.id == post_id).one()
         except:
             return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+        
+        # check if post belongs to the authenticated user
+        if post.user != user_token['username']:
+            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+
+        session.delete(post)
         session.commit()
 
         # return status

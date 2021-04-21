@@ -13,20 +13,21 @@ import {
   Button,
   Spinner,
 } from "react-bootstrap";
+import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 export default function PostEdit(props) {
   let { postId } = useParams();
   let history = useHistory();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [confirm, setConfirm] = useState(false);
-  const { authState, setAuthState } = React.useContext(AuthContext);
+  const { authState, setAuthState, userState } = React.useContext(AuthContext);
   const { data, error, isLoaded } = GetApiRequest("/post/" + String(postId));
   const isMounted = useRef(1);
 
   // component did mount
   useEffect(() => {
     isMounted.current = 1;
-    if (!authState) {
+    if (!authState || userState == null) {
       history.push("/");
     }
     return () => {
@@ -36,6 +37,10 @@ export default function PostEdit(props) {
 
   const refreshState = () => {
     if (isLoaded && isMounted) {
+      if (data.user != userState.username) {
+        history.push("/");
+      }
+      console.log(data.user);
       setTitle(data.title);
       setDescription(data.text);
     }
@@ -44,7 +49,7 @@ export default function PostEdit(props) {
   // set initial state when data loads
   useEffect(() => {
     refreshState();
-  }, [data, isLoaded]);
+  }, [isLoaded]);
 
   // handles edit
   const handleSubmit = (evt) => {

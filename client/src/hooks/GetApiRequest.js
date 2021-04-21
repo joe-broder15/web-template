@@ -12,8 +12,9 @@ export default function GetApiRequest(url) {
       axiosInstance
         .get(url)
         .then((response) => {
-          setIsLoaded(true);
+          
           setData(response.data);
+          setIsLoaded(true);
         })
         .catch((error) => {
           setError(error);

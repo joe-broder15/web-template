@@ -23,7 +23,7 @@ export default function TryLogin(authState, setAuthState, userState, setUserStat
       return;
     }
     fetchData();
-  }, []);
+  }, [authState, userState]);
 
   return [error];
 }

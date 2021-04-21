@@ -16,7 +16,7 @@ export default function PostDetail(props) {
   let { postId } = useParams();
   // get posts using our GET api hook
   const { data, error, isLoaded } = GetApiRequest("/post/" + String(postId));
-  const { authState, setAuthState } = React.useContext(AuthContext);
+  const { authState, setAuthState, userState } = React.useContext(AuthContext);
   // check errors
   if (error !== null) {
     return <div>Error: {error.message}</div>;
@@ -25,7 +25,7 @@ export default function PostDetail(props) {
   if (!isLoaded) {
     return (
       <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only"></span>
       </Spinner>
     );
   }
@@ -76,7 +76,7 @@ export default function PostDetail(props) {
                 </Card.Body>
               </Card>
               <br/>
-              {authState ? (
+              {authState && userState!= null && userState.username == data.user ? (
                 // if logged in link to the edit page
                 <Row>
                   <Col sm="2">

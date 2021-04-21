@@ -4,7 +4,9 @@ import AuthContext from "../../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 export default function Logout() {
   const history = useHistory();
-  const { authState, setAuthState } = React.useContext(AuthContext);
+  const { authState, setAuthState, userState, setUserState } = React.useContext(
+    AuthContext
+  );
   const handleSubmit = (evt) => {
     const logout = () => {
       axiosInstance
@@ -13,6 +15,7 @@ export default function Logout() {
           if (response.status == 200) {
             localStorage.removeItem("access_token");
             setAuthState(false);
+            setUserState(null);
             alert("logged out");
             history.push("/");
           }
@@ -24,9 +27,5 @@ export default function Logout() {
     logout();
   };
 
-  return (
-    <a onClick={handleSubmit}>
-      Logout
-    </a>
-  );
+  return <a onClick={handleSubmit}>Logout</a>;
 }
