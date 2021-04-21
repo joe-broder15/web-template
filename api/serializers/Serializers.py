@@ -29,6 +29,8 @@ class PostSchema(Schema):
     title = fields.String(required=True, validate=must_not_be_blank)
     text = fields.String(required=True, validate=must_not_be_blank)
     created_date = fields.DateTime(dump_only=True)
+    user = fields.String(dump_only=True)
+
     class Meta:
         ordered = True
 

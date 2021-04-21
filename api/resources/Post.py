@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import request
 from marshmallow import ValidationError
+from sqlalchemy.sql.functions import user
 from models.Models import Post, DBSession
 from serializers.Serializers import PostSchema
 from http import HTTPStatus
@@ -27,7 +28,7 @@ class PostList(Resource):
 
         # create new Post
         session = DBSession()
-        post = Post(text=data['text'], title=data['title'])
+        post = Post(text=data['text'], title=data['title'], user=user_token['username'])
         session.add(post)
         session.commit()
 

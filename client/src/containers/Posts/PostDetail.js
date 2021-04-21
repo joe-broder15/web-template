@@ -41,6 +41,9 @@ export default function PostDetail(props) {
 
                 <dt class="col-sm-3">Created</dt>
                 <dd class="col-sm-9">{data.created_date}</dd>
+
+                <dt class="col-sm-3">Created By:</dt>
+                <dd class="col-sm-9">{data.user}</dd>
               </div>
               {authState ? (
                 // if logged in link to the edit page

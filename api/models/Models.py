@@ -6,15 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, DateTime
 import datetime
 
-# post model
+
 Base = declarative_base()
-class Post(Base):
-    #define our table
-    __tablename__ = 'post'
-    id = Column(Integer, primary_key=True)
-    text = Column(String(20), default="post text", nullable=False)
-    title = Column(String(250), default="post title", nullable=False)
-    created_date = Column(DateTime, default=datetime.datetime.utcnow)        
 
 # user model
 class User(Base):
@@ -25,6 +18,16 @@ class User(Base):
     # password_salt = Column(String(60), default="post text", nullable=False,unique=True)
     password_hash = Column(String(60), default="post text", nullable=False)
     privilege = Column(Integer, nullable=False, default=1)
+
+# post model
+class Post(Base):
+    #define our table
+    __tablename__ = 'post'
+    id = Column(Integer, primary_key=True)
+    text = Column(String(20), default="post text", nullable=False)
+    title = Column(String(250), default="post title", nullable=False)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)        
+    user = Column(String(20), ForeignKey('user.username'), nullable=False)  
 
 # token blacklist
 class BlackListToken(Base):

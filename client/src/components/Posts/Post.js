@@ -10,6 +10,7 @@ export default function Post(props) {
           <Link to={"/post/" + props.data.id}>{props.data.title + props.data.id}</Link>
         </h5>
         <p className="card-text">{props.data.text}</p>
+        <b className="card-text">Made By: {props.data.user}</b>
       </div>
     </div>
   );
