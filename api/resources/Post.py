@@ -35,6 +35,20 @@ class PostList(Resource):
         # return post to user
         return post_serializer.dump(post), HTTPStatus.CREATED
 
+# get all posts belonging to a user
+class PostUser(Resource):
+    # get list of posts
+    def get(self, username):
+        # get posts
+        session = DBSession()
+        try:
+            post=session.query(Post).filter(Post.user == username).all()
+        except:
+            return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+        
+        # return serialized post
+        return post_serializer.dump(post, many=True), HTTPStatus.OK
+
 # get, modify or delete an individual post
 class PostDetail(Resource):
     # get an individual post

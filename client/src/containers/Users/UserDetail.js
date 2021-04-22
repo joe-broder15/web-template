@@ -57,7 +57,22 @@ export default function UserDetail(props) {
           </Row>
 
           <Card>
-            <Card.Header>Information</Card.Header>
+            <Card.Header>
+              <Row className="justify-content-between">
+                <Col xs="auto">Information</Col>
+                <Col xs="auto">
+                  {authState &&
+                  userState != null &&
+                  userState.username == data.username ? (
+                    <Link to={"/"}>
+                      <Button>Edit</Button>
+                    </Link>
+                  ) : (
+                    ""
+                  )}
+                </Col>
+              </Row>
+            </Card.Header>
             <Card.Body>
               <ListGroup variant="flush">
                 <ListGroup.Item>
@@ -105,10 +120,11 @@ export default function UserDetail(props) {
             </Card.Body>
           </Card>
           <br />
+
           {data.private ? (
             <h1>This account's posts are private</h1>
           ) : (
-            <UserPosts user={data.username}/>
+            <UserPosts user={data.username} />
           )}
         </Col>
       </Row>

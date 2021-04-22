@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 from flask_cors import CORS
 # import views
-from resources.Post import PostList, PostDetail
+from resources.Post import PostList, PostDetail, PostUser
 from resources.Auth import UserResource, TokenResource
 from resources.User import UserDetail
 from flask_bcrypt import Bcrypt
@@ -19,6 +19,7 @@ bcrypt = Bcrypt(app)
 # set up routes
 api.add_resource(PostList, '/post')
 api.add_resource(PostDetail,'/post/<post_id>')
+api.add_resource(PostUser,'/post/user/<username>')
 api.add_resource(UserResource, '/auth/user')
 api.add_resource(TokenResource, '/auth/token')
 api.add_resource(UserDetail, '/user/<username>')
