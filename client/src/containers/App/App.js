@@ -14,7 +14,7 @@ import PostDetail from "../Posts/PostDetail";
 import PostEdit from "../Posts/PostEdit";
 import Login from "../Auth/Login";
 import Register from "../Auth/Register";
-import Logout from "../Auth/Logout";
+import UserDetail from "../Users/UserDetail";
 import AppNavbar from "./AppNavbar";
 import LoginHook from "../../hooks/LoginHook";
 
@@ -34,6 +34,9 @@ export default function App() {
           <Switch>
             <Route path="/post">
               <PostRoutes />
+            </Route>
+            <Route path="/user">
+              <UserRoutes />
             </Route>
             <Route path="/create">
               <PostCreate />
@@ -59,14 +62,28 @@ function PostRoutes() {
   let { id } = useParams();
   return (
     <Switch>
-      <Route path={`${match.path}/edit/:postId`}>
+      <Route path={`${match.path}/:postId/edit`}>
         <PostEdit />
       </Route>
       <Route path={`${match.path}/:postId`}>
         <PostDetail />
       </Route>
 
-      <Route path={match.path}>{/* <h3>Please select a topic.</h3> */}</Route>
+      <Route path={match.path}></Route>
+    </Switch>
+  );
+}
+
+function UserRoutes() {
+  let match = useRouteMatch();
+  return (
+    <Switch>
+      <Route path={`${match.path}/:userName`}>
+        <UserDetail/>
+      </Route>
+      
+
+      <Route path={match.path}>g</Route>
     </Switch>
   );
 }

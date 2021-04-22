@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
+import UserLink from "../Users/UserLink";
 
 export default function Post(props) {
   return (
@@ -13,7 +14,7 @@ export default function Post(props) {
         </Card.Title>
         <Card.Text>{props.data.text}</Card.Text>
         <Card.Text>
-          <i>Made By: {props.data.user}</i>
+          <i>Made By: <UserLink user={props.data.user}/></i>
         </Card.Text>
       </Card.Body>
     </Card>

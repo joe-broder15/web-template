@@ -11,7 +11,7 @@ import {
   Button,
   Spinner,
 } from "react-bootstrap";
-
+import UserLink from "../../components/Users/UserLink";
 export default function PostDetail(props) {
   let { postId } = useParams();
   // get posts using our GET api hook
@@ -69,7 +69,7 @@ export default function PostDetail(props) {
                         <Col sm="2">
                           <b>Author:</b>
                         </Col>
-                        <Col>{data.user}</Col>
+                        <Col><UserLink user={data.user}/></Col>
                       </Row>
                     </ListGroup.Item>
                   </ListGroup>
@@ -80,7 +80,7 @@ export default function PostDetail(props) {
                 // if logged in link to the edit page
                 <Row>
                   <Col sm="2">
-                    <Link to={"/post/edit/" + String(postId)}>
+                    <Link to={"/post/" + String(postId)+"/edit"}>
                       <Button>Edit</Button>
                     </Link>
                   </Col>

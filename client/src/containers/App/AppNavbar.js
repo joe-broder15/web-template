@@ -5,6 +5,7 @@ import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import Logout from "../Auth/Logout";
 
 import AuthContext from "../../contexts/AuthContext";
+import UserLink from "../../components/Users/UserLink";
 
 export default function AppNavbar() {
   const { authState, setAuthState, userState, setUserState } = React.useContext(
@@ -38,12 +39,11 @@ export default function AppNavbar() {
               title={userState.username}
               id="collasible-nav-dropdown"
             >
-              <Link to={"/users/" + userState.username}>
-                <NavDropdown.Item>Profile</NavDropdown.Item>
-              </Link>
+              <NavDropdown.Item>
+                <UserLink user={userState.username}/>
+              </NavDropdown.Item>
 
-              
-                <Logout />
+              <Logout />
             </NavDropdown>
           ) : (
             <Fragment>
