@@ -50,7 +50,7 @@ class UserProfileSchema(Schema):
     name = fields.String(required=False)
     gender = fields.String(required=False)
     bio = fields.String(required=False)
-    birthday = fields.DateTime(required=False)
+    birthday = fields.Date(required=False)
     avatar = fields.String(required=False)
     cover = fields.String(required=False)
     private = fields.Boolean(required=False)

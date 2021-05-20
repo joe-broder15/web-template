@@ -21,38 +21,42 @@ class UserDetail(Resource):
         try:
             profile=session.query(UserProfile).filter(UserProfile.username == username).one()
         except:
-            return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+            return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
         # return serialized post
         return user_profile_serializer.dump(profile), HTTPStatus.OK
 
-    # # update an individual post
-    # @token_required
-    # def put(self, post_id, user_token):
-    #     # get post from db
-    #     session = DBSession()
-    #     try:
-    #         post=session.query(Post).filter(Post.id == post_id).one()
-    #     except:
-    #         return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+    # update an individual user profile
+    @token_required
+    def put(self, username, user_token):
+        # get post from db
+        session = DBSession()
+        try:
+            profile=session.query(UserProfile).filter(UserProfile.username == user_token['username']).one()
+        except:
+            return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
-    #     # check if post belongs to the authenticated user
-    #     if post.user != user_token['username']:
-    #         return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+        # check if post belongs to the authenticated user
+        if profile.username != user_token['username']:
+            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
-    #     # serialize inputs
-    #     try:
-    #         data = post_serializer.load(request.get_json())
-    #     except ValidationError as err:
-    #         return {"errors": err.messages}, 422
+        # serialize inputs
+        print(request.get_json())
+        try:
+            data = user_profile_serializer.load(request.get_json())
+        except ValidationError as err:
+            return {"errors": err.messages}, 422
+            
+        # modify post
+        profile.name = data['name']
+        profile.bio = data['bio']
+        profile.gender = data['gender']
+        profile.private = data['private']
+        profile.birthday = data['birthday']
+        session.commit()
 
-    #     # modify post
-    #     post.title = data['title']
-    #     post.text = data['text']
-    #     session.commit()
-
-    #     # return post
-    #     return post_serializer.dump(post), HTTPStatus.CREATED
+        # return post
+        return user_profile_serializer.dump(profile), HTTPStatus.OK
     
     # # delete a post
     # @token_required

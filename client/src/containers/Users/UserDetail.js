@@ -64,7 +64,7 @@ export default function UserDetail(props) {
                   {authState &&
                   userState != null &&
                   userState.username == data.username ? (
-                    <Link to={"/"}>
+                    <Link to={"/user/" + userName + "/edit"}>
                       <Button>Edit</Button>
                     </Link>
                   ) : (
@@ -113,7 +113,7 @@ export default function UserDetail(props) {
                     <Col sm="2">
                       <b>Gender:</b>
                     </Col>
-                    <Col>{data.birthday}</Col>
+                    <Col>{data.gender}</Col>
                   </Row>
                 </ListGroup.Item>
               </ListGroup>

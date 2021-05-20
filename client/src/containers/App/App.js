@@ -15,6 +15,7 @@ import PostEdit from "../Posts/PostEdit";
 import Login from "../Auth/Login";
 import Register from "../Auth/Register";
 import UserDetail from "../Users/UserDetail";
+import UserEdit from "../Users/UserEdit";
 import AppNavbar from "./AppNavbar";
 import LoginHook from "../../hooks/LoginHook";
 
@@ -25,9 +26,11 @@ export default function App() {
   const [userState, setUserState] = useState(null);
   LoginHook(authState, setAuthState, userState, setUserState);
   // check if a token exists in memory, if so log in
-  
+
   return (
-    <AuthContext.Provider value={{authState, setAuthState, userState, setUserState}}>
+    <AuthContext.Provider
+      value={{ authState, setAuthState, userState, setUserState }}
+    >
       <Router>
         <AppNavbar />
         <div>
@@ -78,11 +81,12 @@ function UserRoutes() {
   let match = useRouteMatch();
   return (
     <Switch>
-      <Route path={`${match.path}/:userName`}>
-        <UserDetail/>
+      <Route path={`${match.path}/:userName/edit`}>
+        <UserEdit />
       </Route>
-      
-
+      <Route path={`${match.path}/:userName`}>
+        <UserDetail />
+      </Route>
       <Route path={match.path}>g</Route>
     </Switch>
   );
