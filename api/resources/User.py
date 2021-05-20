@@ -46,7 +46,7 @@ class UserDetail(Resource):
             data = user_profile_serializer.load(request.get_json())
         except ValidationError as err:
             return {"errors": err.messages}, 422
-            
+
         # modify post
         profile.name = data['name']
         profile.bio = data['bio']
@@ -58,23 +58,21 @@ class UserDetail(Resource):
         # return post
         return user_profile_serializer.dump(profile), HTTPStatus.OK
     
-    # # delete a post
-    # @token_required
-    # def delete(self, post_id, user_token):
+    # delete a user
+    @token_required
+    def delete(self, username, user_token):
 
-    #     # delete post
-    #     session = DBSession()
-    #     try:
-    #         post=session.query(Post).filter(Post.id == post_id).one()
-    #     except:
-    #         return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
-        
-    #     # check if post belongs to the authenticated user
-    #     if post.user != user_token['username']:
-    #         return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+        # delete post
+        session = DBSession()
+        try:
+            profile=session.query(UserProfile).filter(UserProfile.username == user_token['username']).one()
+            user=session.query(User).filter(User.username == user_token['username']).one()
+        except:
+            return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
 
-    #     session.delete(post)
-    #     session.commit()
+        session.delete(profile)
+        session.delete(user)
+        session.commit()
 
-    #     # return status
-    #     return "success", HTTPStatus.OK
+        # return status
+        return "success", HTTPStatus.OK

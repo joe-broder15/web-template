@@ -26,7 +26,7 @@ export default function UserEdit(props) {
   const [isPrivate, setPrivate] = useState(false);
 
   const [confirm, setConfirm] = useState(false);
-  const { authState, setAuthState, userState } = React.useContext(AuthContext);
+  const { authState, setAuthState, userState, setUserState } = React.useContext(AuthContext);
   const { data, error, isLoaded } = GetApiRequest("/user/" + String(userName));
   const isMounted = useRef(1);
 
@@ -98,15 +98,19 @@ export default function UserEdit(props) {
   const handleDelete = () => {
     const deleteData = () => {
       axiosInstance
-        .delete("/post/" + String(data.id))
+        .delete("/user/" + userName)
         .then((response) => {
           // setIsLoaded(true);
           if (response.status == 200) {
-            alert("success");
+            localStorage.removeItem("access_token");
+            setAuthState(false);
+            setUserState(null);
+            alert("logged out");
+            history.push("/");
           } else {
             alert("fail");
           }
-          history.push("/");
+          
         })
         .catch((error) => {
           alert(error);
