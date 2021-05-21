@@ -11,6 +11,14 @@ from .Auth import token_required
 user_profile_serializer = UserProfileSchema();
 user_serializer = UserSchema();
 
+# get all users
+class UserList(Resource):
+    # get list of all user profiles
+    def get(self):
+        session = DBSession()
+        users=session.query(UserProfile).all()
+        return user_profile_serializer.dump(users,many=True), HTTPStatus.OK
+
 
 # user details
 class UserDetail(Resource):
@@ -62,14 +70,15 @@ class UserDetail(Resource):
     @token_required
     def delete(self, username, user_token):
 
-        # delete post
+        # get user
         session = DBSession()
         try:
             profile=session.query(UserProfile).filter(UserProfile.username == user_token['username']).one()
             user=session.query(User).filter(User.username == user_token['username']).one()
         except:
             return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
-
+        
+        # delete
         session.delete(profile)
         session.delete(user)
         session.commit()

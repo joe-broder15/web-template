@@ -4,7 +4,7 @@ from flask_cors import CORS
 # import views
 from resources.Post import PostList, PostDetail, PostUser
 from resources.Auth import UserResource, TokenResource
-from resources.User import UserDetail
+from resources.User import UserDetail, UserList
 from flask_bcrypt import Bcrypt
 from flask_restful.utils import cors
 
@@ -22,6 +22,7 @@ api.add_resource(PostDetail,'/post/<post_id>')
 api.add_resource(PostUser,'/post/user/<username>')
 api.add_resource(UserResource, '/auth/user')
 api.add_resource(TokenResource, '/auth/token')
+api.add_resource(UserList, '/user')
 api.add_resource(UserDetail, '/user/<username>')
 if __name__ == '__main__':
     app.run(debug=True)

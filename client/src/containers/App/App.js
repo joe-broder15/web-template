@@ -18,6 +18,8 @@ import UserDetail from "../Users/UserDetail";
 import UserEdit from "../Users/UserEdit";
 import AppNavbar from "./AppNavbar";
 import LoginHook from "../../hooks/LoginHook";
+import AdminPosts from "../Admin/AdminPosts";
+import AdminUsers from "../Admin/AdminUsers";
 
 import AuthContext from "../../contexts/AuthContext";
 
@@ -35,6 +37,9 @@ export default function App() {
         <AppNavbar />
         <div>
           <Switch>
+            <Route path="/admin">
+              <AdminRoutes />
+            </Route>
             <Route path="/post">
               <PostRoutes />
             </Route>
@@ -92,7 +97,17 @@ function UserRoutes() {
   );
 }
 
-function Topic() {
-  let { topicId } = useParams();
-  return <h3>Requested topic ID: {topicId}</h3>;
+function AdminRoutes() {
+  let match = useRouteMatch();
+  return (
+    <Switch>
+      <Route path={`${match.path}/posts`}>
+        <AdminPosts />
+      </Route>
+      <Route path={`${match.path}/users`}>
+        <AdminUsers />
+      </Route>
+      <Route path={match.path}>g</Route>
+    </Switch>
+  );
 }

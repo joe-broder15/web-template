@@ -8,9 +8,8 @@ import AuthContext from "../../contexts/AuthContext";
 import UserLink from "../../components/Users/UserLink";
 
 export default function AppNavbar() {
-  const { authState, setAuthState, userState, setUserState } = React.useContext(
-    AuthContext
-  );
+  const { authState, setAuthState, userState, setUserState } =
+    React.useContext(AuthContext);
 
   return (
     <Navbar bg="dark" variant="dark" expand="md" style={{ padding: "5px" }}>
@@ -40,8 +39,22 @@ export default function AppNavbar() {
               id="collasible-nav-dropdown"
             >
               <NavDropdown.Item>
-                <UserLink user={userState.username}/>
+                <UserLink user={userState.username} />
               </NavDropdown.Item>
+
+              {/* admin controls */}
+              {userState.privilege > 1 ? (
+                <Fragment>
+                  <NavDropdown.Item>
+                    <Link to="/admin/posts">Posts</Link>
+                  </NavDropdown.Item>
+                  <NavDropdown.Item>
+                    <Link to="/admin/users">Users</Link>
+                  </NavDropdown.Item>
+                </Fragment>
+              ) : (
+                ""
+              )}
 
               <Logout />
             </NavDropdown>
