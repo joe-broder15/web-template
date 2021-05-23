@@ -40,12 +40,12 @@ class UserDetail(Resource):
         # get post from db
         session = DBSession()
         try:
-            profile=session.query(UserProfile).filter(UserProfile.username == user_token['username']).one()
+            profile=session.query(UserProfile).filter(UserProfile.username == username).one()
         except:
             return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
         # check if post belongs to the authenticated user
-        if profile.username != user_token['username']:
+        if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
         # serialize inputs
@@ -73,11 +73,15 @@ class UserDetail(Resource):
         # get user
         session = DBSession()
         try:
-            profile=session.query(UserProfile).filter(UserProfile.username == user_token['username']).one()
+            profile=session.query(UserProfile).filter(UserProfile.username == username).one()
             user=session.query(User).filter(User.username == user_token['username']).one()
         except:
             return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
+        # check if post belongs to the authenticated user
+        if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
+            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+
         # delete
         session.delete(profile)
         session.delete(user)

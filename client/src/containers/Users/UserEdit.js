@@ -33,7 +33,7 @@ export default function UserEdit(props) {
   // component did mount
   useEffect(() => {
     isMounted.current = 1;
-    if (!authState || userState == null) {
+    if (!authState || userState == null || (data.username != userState.username && userState.privilege <=1)) {
       history.push("/");
     }
     return () => {
@@ -43,7 +43,7 @@ export default function UserEdit(props) {
 
   const refreshState = () => {
     if (isLoaded && isMounted) {
-      if (data.username != userState.username) {
+      if (!authState || userState == null || (data.username != userState.username && userState.privilege <=1)) {
         history.push("/");
       }
       setAvatar(data.avatar);

@@ -76,7 +76,7 @@ export default function PostDetail(props) {
                 </Card.Body>
               </Card>
               <br/>
-              {authState && userState!= null && userState.username == data.user ? (
+              {authState && userState!= null && (userState.username == data.user  || userState.privilege > 1)? (
                 // if logged in link to the edit page
                 <Row>
                   <Col sm="2">

@@ -74,7 +74,7 @@ class PostDetail(Resource):
             return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
         
         # check if post belongs to the authenticated user
-        if post.user != user_token['username']:
+        if post.user != user_token['username'] and user_token['privilege'] <= 1:
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
         # serialize inputs
@@ -102,8 +102,8 @@ class PostDetail(Resource):
         except:
             return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
         
-        # check if post belongs to the authenticated user
-        if post.user != user_token['username']:
+        # check if post belongs to the authenticated user or admin
+        if post.user != user_token['username'] and user_token['privilege'] <= 1:
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
         session.delete(post)
