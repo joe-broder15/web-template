@@ -63,7 +63,8 @@ export default function UserDetail(props) {
                 <Col xs="auto">
                   {authState &&
                   userState != null &&
-                  (data.username == userState.username || userState.privilege >1) ? (
+                  (data.username == userState.username ||
+                    userState.privilege > 1) ? (
                     <Link to={"/user/" + userName + "/edit"}>
                       <Button>Edit</Button>
                     </Link>

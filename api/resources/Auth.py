@@ -103,7 +103,6 @@ class TokenResource(Resource):
     # login with credentials and get a new token
     def post(self):
         # serialize request data
-        # data = user_serializer.load(request.get_json())
         try:
             data = user_serializer.load(request.get_json())
         except ValidationError as err:

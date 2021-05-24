@@ -5,12 +5,14 @@ from flask_cors import CORS
 from resources.Post import PostList, PostDetail, PostUser
 from resources.Auth import UserResource, TokenResource
 from resources.User import UserDetail, UserList
+from resources.Uploads import UserAvatar
 from flask_bcrypt import Bcrypt
 from flask_restful.utils import cors
 
 # create app
-app = Flask(__name__)
+app = Flask(__name__, static_folder="images")
 # app.config['SECRET_KEY'] = 'your secret key'
+app.config['UPLOAD_FOLDER'] = "images";
 CORS(app)
 api = Api(app)
 # api.decorators=[cors.crossdomain(origin='*')]
@@ -24,5 +26,6 @@ api.add_resource(UserResource, '/auth/user')
 api.add_resource(TokenResource, '/auth/token')
 api.add_resource(UserList, '/user')
 api.add_resource(UserDetail, '/user/<username>')
+api.add_resource(UserAvatar, '/upload/avatar/<username>')
 if __name__ == '__main__':
     app.run(debug=True)

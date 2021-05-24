@@ -1,206 +1,68 @@
 import React, { useState, useEffect, useRef } from "react";
 import axiosInstance from "../../utils/axiosApi";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import GetApiRequest from "../../hooks/GetApiRequest";
+import UserEditBasic from "./UserEditBasic";
+import UserEditAvatar from "./UserEditAvatar";
 import { useParams } from "react-router-dom";
 import {
   Container,
   Row,
   Card,
   Col,
-  Form,
+  ListGroup,
   Button,
   Spinner,
+  Nav,
 } from "react-bootstrap";
 import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 
 export default function UserEdit(props) {
   let { userName } = useParams();
   let history = useHistory();
-  const [avatar, setAvatar] = useState("");
-  const [bio, setBio] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [gender, setGender] = useState("");
-  const [name, setName] = useState("");
-  const [isPrivate, setPrivate] = useState(false);
+  const { authState, userState} =
+    React.useContext(AuthContext);
 
-  const [confirm, setConfirm] = useState(false);
-  const { authState, setAuthState, userState, setUserState } = React.useContext(AuthContext);
-  const { data, error, isLoaded } = GetApiRequest("/user/" + String(userName));
-  const isMounted = useRef(1);
+  let [editType, setEditType] = useState(1);
 
-  // component did mount
+  function renderSwitch(param) {
+    switch (editType) {
+      case 1:
+        return <UserEditBasic />;
+      case 3:
+        return <UserEditAvatar />;
+    }
+  }
+
   useEffect(() => {
-    isMounted.current = 1;
-    if (!authState || userState == null || (data.username != userState.username && userState.privilege <=1)) {
+    if (
+      !authState ||
+      userState == null ||
+      (userName != userState.username && userState.privilege <= 1)
+    ) {
       history.push("/");
     }
-    return () => {
-      isMounted.current = 0;
-    };
   });
 
-  const refreshState = () => {
-    if (isLoaded && isMounted) {
-      if (!authState || userState == null || (data.username != userState.username && userState.privilege <=1)) {
-        history.push("/");
-      }
-      setAvatar(data.avatar);
-      setBio(data.bio);
-      setBirthday(data.birthday);
-      setGender(data.gender);
-      setName(data.name);
-      setPrivate(data.private);
-    }
-  };
-
-  // set initial state when data loads
-  useEffect(() => {
-    refreshState();
-  }, [isLoaded]);
-
-  // handles edit
-  const handleSubmit = (evt) => {
-    console.log(String(birthday));
-    evt.preventDefault();
-    if (bio == "" || name == "" || confirm == false) {
-      alert("please do not leave any fields blank");
-      return;
-    }
-    const editData = () => {
-      axiosInstance
-        .put("/user/" + userName, {
-          username: userName,
-          name: name,
-          bio: bio,
-          gender: gender,
-          private: isPrivate,
-          birthday: String(birthday)
-        })
-        .then((response) => {
-          // setIsLoaded(true);
-          if (response.status == 200) {
-            alert("success");
-          } else {
-            alert("fail");
-          }
-          history.push("/user/" + data.username);
-        })
-        .catch((error) => {
-          alert(error);
-        });
-    };
-    editData();
-  };
-
-  // handles delete
-  const handleDelete = () => {
-    const deleteData = () => {
-      axiosInstance
-        .delete("/user/" + userName)
-        .then((response) => {
-          // setIsLoaded(true);
-          if (response.status == 200) {
-            localStorage.removeItem("access_token");
-            setAuthState(false);
-            setUserState(null);
-            alert("logged out");
-            history.push("/");
-          } else {
-            alert("fail");
-          }
-          
-        })
-        .catch((error) => {
-          alert(error);
-        });
-    };
-    deleteData();
-  };
-
-  // wait for load
-  if (!isLoaded) {
-    return (
-      <Spinner animation="border" role="status">
-        <span className="sr-only"></span>
-      </Spinner>
-    );
-  }
   return (
     <Container>
       <Row>
         <Col>
           <Row className="justify-content-md-center">
             <Col md="8">
-              <h1>Edit User {data.username}</h1>
-              <Card>
-                <Card.Body>
-                  <Form onSubmit={(event) => handleSubmit(event)}>
-                    <Form.Group>
-                      <Form.Label>Name</Form.Label>
-                      <Form.Control
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
-                      />
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                      <Form.Label>Bio</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows="9"
-                        value={bio}
-                        onChange={(event) => setBio(event.target.value)}
-                      />
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                      <Form.Label>Gender</Form.Label>
-                      <Form.Control
-                        value={gender}
-                        onChange={(event) => setGender(event.target.value)}
-                      />
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                      <Form.Check
-                        type="checkbox"
-                        value={isPrivate}
-                        checked={isPrivate}
-                        onChange={(event) => setPrivate(!isPrivate)}
-                        label={"Private"}
-                      />
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                      <Form.Label>Birthday</Form.Label>
-                      <Form.Control
-                        type="date"
-                        placeholder="Date of Birth"
-                        value={birthday}
-                        onChange={(event) => setBirthday(event.target.value)}
-                      />
-                    </Form.Group>
-                    <br />
-                    <Form.Check
-                      type="checkbox"
-                      value={confirm}
-                      checked={confirm}
-                      onChange={(event) => setConfirm(!confirm)}
-                      label={"Confirm"}
-                    />
-                    <br />
-                    <Button type="submit">Submit</Button>
-                  </Form>
-                  <Button variant="warning" onClick={refreshState}>
-                    Reset
-                  </Button>
-                  <Button variant="danger" onClick={handleDelete}>
-                    Delete
-                  </Button>
-                </Card.Body>
-              </Card>
+              <Row>
+                <Col md="2">
+                  <Nav defaultActiveKey="/home" className="flex-column">
+                    <Nav.Link onClick={() => setEditType(1)}>Profile</Nav.Link>
+                    <Nav.Link onClick={() => setEditType(2)}>
+                      Credentials
+                    </Nav.Link>
+                    <Nav.Link onClick={() => setEditType(3)}>Avatar</Nav.Link>
+                  </Nav>
+                </Col>
+                <Col>{renderSwitch(editType)}</Col>
+              </Row>
             </Col>
           </Row>
         </Col>
