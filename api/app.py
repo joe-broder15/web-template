@@ -1,31 +1,31 @@
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 from flask_cors import CORS
-# import views
-from resources.Post import PostList, PostDetail, PostUser
-from resources.Auth import UserResource, TokenResource
-from resources.User import UserDetail, UserList
-from resources.Uploads import UserAvatar
+from flask_mail import * 
 from flask_bcrypt import Bcrypt
 from flask_restful.utils import cors
 
+
+
 # create app
 app = Flask(__name__, static_folder="images")
+
+# setup mail
+
+app.config["MAIL_SERVER"]='smtp.gmail.com'  
+app.config["MAIL_PORT"] = 465      
+app.config["MAIL_USERNAME"] = 'joebroderwebtemplate@gmail.com'  
+app.config['MAIL_PASSWORD'] = '*********************'
+app.config['MAIL_USE_TLS'] = False  
+app.config['MAIL_USE_SSL'] = True  
+mail = Mail(app) 
 # app.config['SECRET_KEY'] = 'your secret key'
-app.config['UPLOAD_FOLDER'] = "images";
+# app.config['UPLOAD_FOLDER'] = "images";
+# cors
 CORS(app)
 api = Api(app)
 # api.decorators=[cors.crossdomain(origin='*')]
 bcrypt = Bcrypt(app)
 
-# set up routes
-api.add_resource(PostList, '/post')
-api.add_resource(PostDetail,'/post/<post_id>')
-api.add_resource(PostUser,'/post/user/<username>')
-api.add_resource(UserResource, '/auth/user')
-api.add_resource(TokenResource, '/auth/token')
-api.add_resource(UserList, '/user')
-api.add_resource(UserDetail, '/user/<username>')
-api.add_resource(UserAvatar, '/upload/avatar/<username>')
-if __name__ == '__main__':
-    app.run(debug=True)
+
+

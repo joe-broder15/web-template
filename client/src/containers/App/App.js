@@ -20,6 +20,8 @@ import AppNavbar from "./AppNavbar";
 import LoginHook from "../../hooks/LoginHook";
 import AdminPosts from "../Admin/AdminPosts";
 import AdminUsers from "../Admin/AdminUsers";
+import EmailVerify from "../Auth/EmailVerify";
+import VerifyInstructions from "../Auth/VerifyInstructions";
 
 import AuthContext from "../../contexts/AuthContext";
 
@@ -37,6 +39,12 @@ export default function App() {
         <AppNavbar />
         <div>
           <Switch>
+            <Route path="/verify/instructions">
+              <VerifyInstructions />
+            </Route>
+            <Route path="/verify/:challenge">
+              <EmailVerify />
+            </Route>
             <Route path="/admin">
               <AdminRoutes />
             </Route>

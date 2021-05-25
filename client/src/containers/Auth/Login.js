@@ -26,19 +26,22 @@ export default function Login() {
         })
         .then((result) => {
           if (result.status == 202) {
-            alert("success");
             axiosInstance.defaults.headers["Authorization"] =
               "JWT " + result.data;
             localStorage.setItem("access_token", result.data);
             // set global authentication state
             setAuthState(true);
-            history.goBack();
+            history.push("/");
           } else {
             alert(result);
           }
         })
         .catch((error) => {
-          alert(error);
+          if (error.response.status == 401) {
+            history.push("/verify/instructions");
+          } else {
+            alert(error);
+          }
         });
     };
     fetchData();

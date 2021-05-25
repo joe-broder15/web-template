@@ -33,7 +33,7 @@ export default function Register(props) {
           console.log(response);
           if (response.status == 201) {
             alert("success");
-            history.push("/");
+            history.push("/verify/instructions");
           } else {
             alert(response);
           }

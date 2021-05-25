@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, DateTime, Boolean
 import datetime
+from sqlalchemy.sql.elements import collate
 
 from sqlalchemy.sql.expression import false, true
 # from typing_extensions import Required
@@ -20,6 +21,7 @@ class User(Base):
     email = Column(String(60), default="post text", nullable=False, unique=True)
     password_hash = Column(String(60), default="post text", nullable=False)
     privilege = Column(Integer, nullable=False, default=1)
+    verified = Column(Boolean, nullable=False, default=False)
 
 # user model
 class UserProfile(Base):
@@ -49,6 +51,12 @@ class Post(Base):
 class BlackListToken(Base):
     __tablename__ = 'token_blacklist'
     token = Column(String(60), nullable=False, primary_key=True)
+
+# email verification record
+class EmailVerification(Base):
+    __tablename__ = 'email_verification'
+    challenge = Column(String(60), nullable=False, primary_key=True)
+    username = Column(String(60), default="post text", nullable=False, unique=True)
 
 # create session maker
 engine = create_engine('sqlite:///sqlalchemy_example.db')
