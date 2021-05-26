@@ -36,7 +36,6 @@ export default function UserDetail(props) {
   // display information about a post
   return (
     <Container>
-      {console.log(data)}
       <Row className="justify-content-md-center">
         <Col md="8">
           <Row>

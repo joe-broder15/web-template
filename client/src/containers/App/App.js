@@ -24,6 +24,8 @@ import EmailVerify from "../Auth/EmailVerify";
 import VerifyInstructions from "../Auth/VerifyInstructions";
 
 import AuthContext from "../../contexts/AuthContext";
+import ForgotPassword from "../Auth/ForgotPassword";
+import ResetPassword from "../Auth/ResetPassword";
 
 export default function App() {
   const [authState, setAuthState] = useState(false);
@@ -39,6 +41,9 @@ export default function App() {
         <AppNavbar />
         <div>
           <Switch>
+            <Route path="/reset/:challenge">
+              <ResetPassword />
+            </Route>
             <Route path="/verify/instructions">
               <VerifyInstructions />
             </Route>
@@ -62,6 +67,9 @@ export default function App() {
             </Route>
             <Route path="/login">
               <Login />
+            </Route>
+            <Route path="/forgotpassword">
+              <ForgotPassword />
             </Route>
             <Route path="/">
               <PostList />

@@ -37,10 +37,9 @@ export default function PostEdit(props) {
 
   const refreshState = () => {
     if (isLoaded && isMounted) {
-      if (data.user != userState.username && userState.privilege <=1 ) {
+      if (data.user != userState.username && userState.privilege <= 1) {
         history.push("/");
       }
-      console.log(data.user);
       setTitle(data.title);
       setDescription(data.text);
     }

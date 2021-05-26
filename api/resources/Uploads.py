@@ -9,10 +9,11 @@ from werkzeug.utils import secure_filename
 from http import HTTPStatus
 from .Auth import token_required
 import os;
+from app import app
 
-UPLOAD_FOLDER = "images"
+UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
 
 # serializer for post class
 user_profile_serializer = UserProfileSchema();

@@ -6,7 +6,7 @@ from flask import request
 from flask_mail import *
 from sqlalchemy.sql.expression import false, text, true
 from marshmallow import ValidationError
-from models.Models import User, UserProfile, BlackListToken, DBSession, EmailVerification
+from models.Models import User, UserProfile, BlackListToken, DBSession, EmailVerification, ResetPassword
 from serializers.Serializers import UserSchema
 from http import HTTPStatus
 import jwt
@@ -160,6 +160,19 @@ class TokenResource(Resource):
         session.close()
         return HTTPStatus.OK
 
+
+class GetUserCredentials(Resource):
+    @token_required
+    def get(self, user_token, username):
+        if(username != user_token['username'] and user_token['privilege'] <= 1):
+            return {"errors": "unautnorized"}, HTTPStatus.UNAUTHORIZED
+
+        session = DBSession()
+        user = session.query(User).filter(User.username == username).one()
+        session.close()
+        return user_serializer.dump(user), HTTPStatus.OK
+
+# used for email verification
 class EmailVerify(Resource):
     def get(self, challenge):
         session = DBSession()
@@ -177,7 +190,80 @@ class EmailVerify(Resource):
         session.close()
 
         return HTTPStatus.OK
+
+# used to reset passwords
+class ResetPasswordRequest(Resource):
+    def post(self):
+        session = DBSession()
+        # check if user exists
+        try:
+            user = session.query(User).filter(User.email == request.get_json()['email']).one()
+        except:
+            {"errors": "email not found"}, HTTPStatus.NOT_FOUND
+
+        # delete existing challenge if one exists
+        try:
+            resetPassword = session.query(ResetPassword).filter(ResetPassword.username == user.username).one()
+            session.delete(resetPassword)
+            session.commit()
+        except:
+            None
         
+        # generate verification challenge
+        salt = ''.join(random.choice(string.ascii_letters) for _ in range(10))
+        challenge = hashlib.sha256(((user.email + salt)).encode('utf-8')).hexdigest()
+        ev = ResetPassword(username = user.username, challenge=challenge);
+        session.add(ev)
+        session.commit()
+
+        # send an email
+        msg = Message('reset password link',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
+        msg.body = "http://localhost:3000/reset/"+challenge  
+        mail.send(msg)  
+        session.close()
+        # return new ceated user
+        return user_serializer.dump(user), HTTPStatus.OK
+
+class PasswordReset(Resource):
+    def post(self, challenge):
+        session = DBSession()
+        try:
+            resetPassword = session.query(ResetPassword).filter(ResetPassword.challenge == challenge).one()
+            user = session.query(User).filter(User.username == resetPassword.username).one()
+            print(resetPassword)
+        except:
+            {"errors": "challenge or user not found"}, HTTPStatus.NOT_FOUND
+        
+        # make sure user is verified
+        if(user.verified == False):
+            return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
+
+        # set new password
+        user.password_hash = generate_password_hash(request.get_json()['password'], 10)
+        session.delete(resetPassword)
+        session.commit()
+        session.close()
+        return HTTPStatus.OK
+
+class UserPermission(Resource):
+    @token_required
+    def put(self, user_token, username):
+        # make sure user is verified
+        if(user_token['privilege'] <= 1):
+            return {"errors": "unauthorized"}, HTTPStatus.UNAUTHORIZED
+        
+        # get and return user data
+        session = DBSession()
+        try:
+            user = session.query(User).filter(User.username == username).one()
+        except:
+            {"errors": "user not found"}, HTTPStatus.NOT_FOUND
+        
+        user.privilege = request.get_json()['privilege'];
+        session.commit()
+        session.close()
+        return HTTPStatus.OK
+
 
 
 

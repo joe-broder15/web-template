@@ -41,7 +41,7 @@ class UserSchema(Schema):
     email = fields.String(required=True, validate=validate_email)
     password = fields.String(required=True, validate=validate_password, load_only=True)
     privilege = fields.Int(validate=must_not_be_negative)
-    privilege = fields.Bool()
+    verified = fields.Bool()
     
     class Meta:
         ordered = True

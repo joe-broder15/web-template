@@ -57,7 +57,6 @@ export default function UserEditBasic(props) {
 
   // handles edit
   const handleSubmit = (evt) => {
-    console.log(String(birthday));
     evt.preventDefault();
     if (bio == "" || name == "" || confirm == false) {
       alert("please do not leave any fields blank");

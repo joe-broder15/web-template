@@ -58,6 +58,13 @@ class EmailVerification(Base):
     challenge = Column(String(60), nullable=False, primary_key=True)
     username = Column(String(60), default="post text", nullable=False, unique=True)
 
+# reset password record
+class ResetPassword(Base):
+    __tablename__ = 'reset_password'
+    challenge = Column(String(60), nullable=False, primary_key=True)
+    username = Column(String(60), default="post text", nullable=False, unique=True)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow) 
+
 # create session maker
 engine = create_engine('sqlite:///sqlalchemy_example.db')
 Base.metadata.create_all(engine)

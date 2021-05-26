@@ -13,6 +13,7 @@ export default function TryLogin(authState, setAuthState, userState, setUserStat
           if (response.status == 200) {
             setAuthState(true);
             setUserState(response.data);
+            console.log(response.data)
           }
         })
         .catch((error) => {

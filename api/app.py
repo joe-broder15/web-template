@@ -14,13 +14,15 @@ app = Flask(__name__, static_folder="images")
 
 app.config["MAIL_SERVER"]='smtp.gmail.com'  
 app.config["MAIL_PORT"] = 465      
-app.config["MAIL_USERNAME"] = 'joebroderwebtemplate@gmail.com'  
-app.config['MAIL_PASSWORD'] = '*********************'
+
 app.config['MAIL_USE_TLS'] = False  
 app.config['MAIL_USE_SSL'] = True  
+app.config['UPLOAD_FOLDER'] = "images";
+app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif'])
+
 mail = Mail(app) 
 # app.config['SECRET_KEY'] = 'your secret key'
-# app.config['UPLOAD_FOLDER'] = "images";
+
 # cors
 CORS(app)
 api = Api(app)
