@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-// const axios = require('axios');
 import axiosInstance from "../utils/axiosApi";
 
 export default function TryLogin(authState, setAuthState, userState, setUserState) {

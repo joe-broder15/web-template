@@ -1,3 +1,4 @@
+// navbar component
 import React, { Fragment, useState, useEffect } from "react";
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
@@ -23,6 +24,7 @@ export default function AppNavbar() {
           <Nav.Link>
             <Link to="/">Home</Link>
           </Nav.Link>
+          {/* check if user is logged in, if so allow them to create a new post */}
           {authState && userState != null ? (
             <Nav.Link>
               <Link to="/create">Create</Link>

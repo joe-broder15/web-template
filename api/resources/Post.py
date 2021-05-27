@@ -6,6 +6,7 @@ from models.Models import Post, DBSession
 from serializers.Serializers import PostSchema
 from http import HTTPStatus
 from .Auth import token_required
+
 # serializer for post class
 post_serializer = PostSchema();
 
@@ -37,7 +38,6 @@ class PostList(Resource):
 
 # get all posts belonging to a user
 class PostUser(Resource):
-    # get list of posts
     def get(self, username):
         # get posts
         session = DBSession()
@@ -46,7 +46,7 @@ class PostUser(Resource):
         except:
             return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
         
-        # return serialized post
+        # return serialized posts
         return post_serializer.dump(post, many=True), HTTPStatus.OK
 
 # get, modify or delete an individual post

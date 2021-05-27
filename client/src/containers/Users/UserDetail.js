@@ -41,7 +41,14 @@ export default function UserDetail(props) {
           <Row>
             <Col md="auto">
               <img
-                src={data.avatar == null?"/default_avatar.jpg":new URL("http://localhost:5000/"+data.avatar.replace("\\", "/").replace("\\", "/"))}
+                src={
+                  data.avatar == null
+                    ? "/default_avatar.jpg"
+                    : new URL(
+                        "http://localhost:5000/" +
+                          data.avatar.replace("\\", "/").replace("\\", "/")
+                      )
+                }
                 style={{
                   width: "120px",
                   height: "120px",

@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosApi";
 import { useHistory, useParams } from "react-router-dom";
-import { Container, Row, Card, Col, Form, Button,Spinner } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Card,
+  Col,
+  Form,
+  Button,
+  Spinner,
+} from "react-bootstrap";
 
 export default function ResetPassword(props) {
-  let history = useHistory();
   let { challenge } = useParams();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");

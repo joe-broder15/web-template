@@ -15,7 +15,7 @@ export default function PostList() {
   if (!isLoaded) {
     return (
       <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only"></span>
       </Spinner>
     );
   }

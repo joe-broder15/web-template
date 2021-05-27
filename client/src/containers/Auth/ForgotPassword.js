@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
-import GetApiRequest from "../../hooks/GetApiRequest";
+// used to send a password reset email
+import React, { useState } from "react";
 import axiosInstance from "../../utils/axiosApi";
 import { useHistory } from "react-router-dom";
-import { Container, Row, Card, Col, Form, Button, Spinner } from "react-bootstrap";
-import AuthContext from "../../contexts/AuthContext";
+import {
+  Container,
+  Row,
+  Card,
+  Col,
+  Form,
+  Button,
+  Spinner,
+} from "react-bootstrap";
 
 export default function ForgotPassword() {
   let history = useHistory();

@@ -7,11 +7,11 @@ from serializers.Serializers import UserProfileSchema, UserSchema
 from http import HTTPStatus
 from .Auth import token_required
 
-# serializer for post class
+# serializer for user and profiles
 user_profile_serializer = UserProfileSchema();
 user_serializer = UserSchema();
 
-# get all users
+# get all user profiles
 class UserList(Resource):
     # get list of all user profiles
     def get(self):
@@ -20,7 +20,7 @@ class UserList(Resource):
         return user_profile_serializer.dump(users,many=True), HTTPStatus.OK
 
 
-# user details
+# handles public profile informatiom
 class UserDetail(Resource):
     # get an individual post
     def get(self, username):

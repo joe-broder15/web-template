@@ -9,9 +9,8 @@ export default function PostCreate() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [confirm, setConfirm] = useState(false);
-  const { authState, setAuthState, userState, setUserState } = React.useContext(
-    AuthContext
-  );
+  const { authState, setAuthState, userState, setUserState } =
+    React.useContext(AuthContext);
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (title == "" || description == "" || confirm == false) {

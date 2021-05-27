@@ -1,10 +1,7 @@
 
-import email
-from flask.globals import session
 from flask_restful import Resource
 from flask import request
 from flask_mail import *
-from sqlalchemy.sql.expression import false, text, true
 from marshmallow import ValidationError
 from models.Models import User, UserProfile, BlackListToken, DBSession, EmailVerification, ResetPassword
 from serializers.Serializers import UserSchema
@@ -16,6 +13,8 @@ from functools import wraps
 from app import mail, app
 import hashlib
 import random, string
+
+SECRET_KEY = app.config['SECRET_KEY']
 
 # serializer for user class
 user_serializer = UserSchema();
@@ -45,7 +44,7 @@ def token_required(f):
         
         #try to decode token
         try:
-            data = jwt.decode(token, 'your secret key', algorithms=["HS256"])
+            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         except:
             return {"errors": "Bad Token"}, HTTPStatus.UNAUTHORIZED
 
@@ -61,9 +60,15 @@ class UserResource(Resource):
     # get username and email
     @token_required
     def get(self, user_token):
-        # get and return user data
         session = DBSession()
-        user = session.query(User).filter(User.username == user_token['username']).one()
+
+        # try to get a user
+        try:
+            user = session.query(User).filter(User.username == user_token['username']).one()
+        except:
+            return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
+
+        # close session and return
         session.close()
         return user_serializer.dump(user), HTTPStatus.OK
 
@@ -91,22 +96,26 @@ class UserResource(Resource):
         session.add(profile)
         session.commit()
 
-        # generate verification challenge
+        # generate verification challenge by hashing a random string with the user's email
         salt = ''.join(random.choice(string.ascii_letters) for _ in range(10))
         challenge = hashlib.sha256(((user.email + salt)).encode('utf-8')).hexdigest()
+
+        # create a verification challenge in the database
         ev = EmailVerification(username = user.username, challenge=challenge);
         session.add(ev)
         session.commit()
 
-        # send an email
+        # send an verification link to the user
         msg = Message('verify email',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
         msg.body = "http://localhost:3000/verify/"+challenge  
         mail.send(msg)  
         session.close()
+
         # return new ceated user
         return user_serializer.dump(user), HTTPStatus.CREATED
     
-    # delete user
+    # todo
+    # delete a user
     @token_required
     def delete(self, user_token):
         # blacklist token and delete user
@@ -121,6 +130,7 @@ class UserResource(Resource):
 
 # issues and blacklists tokens
 class TokenResource(Resource):
+
     # login with credentials and get a new token
     def post(self):
         # serialize request data
@@ -136,6 +146,7 @@ class TokenResource(Resource):
         except:
             return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
 
+        # check if user is verified
         if(user.verified == False):
             return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
@@ -146,8 +157,10 @@ class TokenResource(Resource):
                 'email': user.email,
                 'privilege': user.privilege,
                 'exp' : datetime.utcnow() + timedelta(minutes = 30)
-            }, 'your secret key', algorithm="HS256")
+            }, SECRET_KEY, algorithm="HS256")
+            session.close()
             return token, HTTPStatus.ACCEPTED
+
         session.close()
         return {"errors": "invalid password"}, HTTPStatus.FORBIDDEN
     
@@ -160,23 +173,31 @@ class TokenResource(Resource):
         session.close()
         return HTTPStatus.OK
 
-
+# get the credentials of a specific user
 class GetUserCredentials(Resource):
     @token_required
     def get(self, user_token, username):
+        # check if the user owns the desired credentials or is an admin
         if(username != user_token['username'] and user_token['privilege'] <= 1):
             return {"errors": "unautnorized"}, HTTPStatus.UNAUTHORIZED
-
+        
+        # get credentials
         session = DBSession()
-        user = session.query(User).filter(User.username == username).one()
+        try:
+            user = session.query(User).filter(User.username == username).one()
+        except:
+            return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
+
         session.close()
+
         return user_serializer.dump(user), HTTPStatus.OK
 
 # used for email verification
 class EmailVerify(Resource):
     def get(self, challenge):
         session = DBSession()
-        # fetch challenge
+
+        # search db for the desired challenge
         try:
             ev = session.query(EmailVerification).filter(EmailVerification.challenge == challenge).one()
             user = session.query(User).filter(User.username == ev.username).one()
@@ -224,9 +245,12 @@ class ResetPasswordRequest(Resource):
         # return new ceated user
         return user_serializer.dump(user), HTTPStatus.OK
 
+# resets a password and resolves a reset password request
 class PasswordReset(Resource):
     def post(self, challenge):
         session = DBSession()
+
+        # get the reset request from the database
         try:
             resetPassword = session.query(ResetPassword).filter(ResetPassword.challenge == challenge).one()
             user = session.query(User).filter(User.username == resetPassword.username).one()
@@ -243,6 +267,7 @@ class PasswordReset(Resource):
         session.delete(resetPassword)
         session.commit()
         session.close()
+
         return HTTPStatus.OK
 
 class UserPermission(Resource):
@@ -259,9 +284,11 @@ class UserPermission(Resource):
         except:
             {"errors": "user not found"}, HTTPStatus.NOT_FOUND
         
+        # set new privilege
         user.privilege = request.get_json()['privilege'];
         session.commit()
         session.close()
+
         return HTTPStatus.OK
 
 

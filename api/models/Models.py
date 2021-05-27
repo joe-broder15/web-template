@@ -1,21 +1,14 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine,Column, Integer, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, DateTime, Boolean
-import datetime
-from sqlalchemy.sql.elements import collate
-
 from sqlalchemy.sql.expression import false, true
-# from typing_extensions import Required
+import datetime
 
-
+# SQL alchemy base model
 Base = declarative_base()
 
-# user model
+# user model, this stores authentication data
 class User(Base):
-    #define our table
     __tablename__ = 'user'
     username = Column(String(20), primary_key=True, unique=True)
     email = Column(String(60), default="post text", nullable=False, unique=True)
@@ -23,9 +16,8 @@ class User(Base):
     privilege = Column(Integer, nullable=False, default=1)
     verified = Column(Boolean, nullable=False, default=False)
 
-# user model
+# user profile model, stores public user profile information
 class UserProfile(Base):
-    #define our table
     __tablename__ = 'user_profile'
     username = Column(String(20), ForeignKey(User.username), primary_key=True, unique=True)
     name = Column(String(60), nullable=True)
@@ -36,8 +28,7 @@ class UserProfile(Base):
     cover = Column(String(250), nullable=True)
     private = Column(Boolean(), nullable=false, default=0);
 
-
-# post model
+# post model, main data object for this app
 class Post(Base):
     #define our table
     __tablename__ = 'post'

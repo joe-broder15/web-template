@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosApi";
 import { useHistory } from "react-router-dom";
-import { Container, Row, Card, Col, Form, Button, Spinner } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Card,
+  Col,
+  Form,
+  Button,
+  Spinner,
+} from "react-bootstrap";
 import Feedback from "react-bootstrap/esm/Feedback";
 
 export default function Register(props) {
@@ -23,7 +31,7 @@ export default function Register(props) {
       alert("please do not leave any fields blank");
       return;
     }
-    
+
     const fetchData = () => {
       axiosInstance
         .post("/auth/user", {
@@ -44,9 +52,8 @@ export default function Register(props) {
           alert(error);
           setLoading(false);
         });
-        
     };
-    
+
     fetchData();
     setLoading(true);
   };

@@ -1,3 +1,4 @@
+// admin only list of all posts
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
@@ -7,12 +8,11 @@ import UserLink from "../../components/Users/UserLink";
 
 export default function AdminPosts(props) {
   let history = useHistory();
-
-  // const [confirm, setConfirm] = useState(false);
   const { authState, setAuthState, userState, setUserState } =
     React.useContext(AuthContext);
   const isMounted = useRef(1);
 
+  // get posts from api
   const { data, error, isLoaded } = GetApiRequest("/post");
 
   // component did mount

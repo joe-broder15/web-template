@@ -29,7 +29,8 @@ export default function Login() {
             axiosInstance.defaults.headers["Authorization"] =
               "JWT " + result.data;
             localStorage.setItem("access_token", result.data);
-            // set global authentication state
+
+            // set global authentication state after a login succeeds, then redirect
             setAuthState(true);
             history.push("/");
           } else {

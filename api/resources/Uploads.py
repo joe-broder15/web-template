@@ -19,6 +19,7 @@ ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
 user_profile_serializer = UserProfileSchema();
 user_serializer = UserSchema();
 
+# handles upload of user avatars
 class UserAvatar(Resource):
     # upload a new user avatar
     @token_required

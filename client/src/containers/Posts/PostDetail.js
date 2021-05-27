@@ -69,18 +69,22 @@ export default function PostDetail(props) {
                         <Col sm="2">
                           <b>Author:</b>
                         </Col>
-                        <Col><UserLink user={data.user}/></Col>
+                        <Col>
+                          <UserLink user={data.user} />
+                        </Col>
                       </Row>
                     </ListGroup.Item>
                   </ListGroup>
                 </Card.Body>
               </Card>
-              <br/>
-              {authState && userState!= null && (userState.username == data.user  || userState.privilege > 1)? (
+              <br />
+              {authState &&
+              userState != null &&
+              (userState.username == data.user || userState.privilege > 1) ? (
                 // if logged in link to the edit page
                 <Row>
                   <Col sm="2">
-                    <Link to={"/post/" + String(postId)+"/edit"}>
+                    <Link to={"/post/" + String(postId) + "/edit"}>
                       <Button>Edit</Button>
                     </Link>
                   </Col>

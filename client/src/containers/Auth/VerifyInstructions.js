@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import GetApiRequest from "../../hooks/GetApiRequest";
-import {
-  Container,
-  Row,
-  Card,
-  Col,
-  Spinner,
-} from "react-bootstrap";
+import { Container, Row, Card, Col, Spinner } from "react-bootstrap";
 export default function VerifyInstructions() {
   return (
     <Container>
@@ -17,7 +11,8 @@ export default function VerifyInstructions() {
               <h1>Verification Required</h1>
               <Card>
                 <Card.Body>
-                  A verification link has been sent to the email you signed up with, check your inbox.
+                  A verification link has been sent to the email you signed up
+                  with, check your inbox.
                 </Card.Body>
               </Card>
             </Col>

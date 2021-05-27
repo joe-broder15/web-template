@@ -14,6 +14,7 @@ export default function Logout() {
         .delete("/auth/token")
         .then((response) => {
           if (response.status == 200) {
+            // remode local token and reset auth contexts if logout succeeds
             localStorage.removeItem("access_token");
             setAuthState(false);
             setUserState(null);

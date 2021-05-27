@@ -19,42 +19,9 @@ import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 export default function UserCredentials(props) {
   let { userName } = useParams();
   let history = useHistory();
-  //   const [avatar, setAvatar] = useState("");
-  //   const [bio, setBio] = useState("");
-  //   const [birthday, setBirthday] = useState("");
-  //   const [gender, setGender] = useState("");
-  //   const [name, setName] = useState("");
-  //   const [isPrivate, setPrivate] = useState(false);
 
-  //   const [confirm, setConfirm] = useState(false);
-  //   const { authState, setAuthState, userState, setUserState } =
-  //     React.useContext(AuthContext);
   const { data, error, isLoaded } = GetApiRequest("/auth/user/"+userName);
   //   const isMounted = useRef(1);
-
-  //   // component did mount
-  //   useEffect(() => {
-  //     isMounted.current = 1;
-  //     return () => {
-  //       isMounted.current = 0;
-  //     };
-  //   });
-
-  //   const refreshState = () => {
-  //     if (isLoaded && isMounted) {
-  //       setAvatar(data.avatar);
-  //       setBio(data.bio);
-  //       setBirthday(data.birthday);
-  //       setGender(data.gender);
-  //       setName(data.name);
-  //       setPrivate(data.private);
-  //     }
-  //   };
-
-  //   // set initial state when data loads
-  //   useEffect(() => {
-  //     refreshState();
-  //   }, [isLoaded]);
 
   // wait for load
   if (!isLoaded) {

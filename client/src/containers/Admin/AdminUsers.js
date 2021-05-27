@@ -1,3 +1,5 @@
+// admin only list of all registered users
+
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
@@ -7,12 +9,11 @@ import UserLink from "../../components/Users/UserLink";
 
 export default function AdminPosts(props) {
   let history = useHistory();
-
-  // const [confirm, setConfirm] = useState(false);
   const { authState, setAuthState, userState, setUserState } =
     React.useContext(AuthContext);
   const isMounted = useRef(1);
 
+  // get all users from api
   const { data, error, isLoaded } = GetApiRequest("/user");
 
   // component did mount
@@ -25,7 +26,7 @@ export default function AdminPosts(props) {
       isMounted.current = 0;
     };
   });
-
+  
   // wait for load
   if (!isLoaded) {
     return (

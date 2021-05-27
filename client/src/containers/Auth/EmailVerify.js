@@ -1,3 +1,4 @@
+// the page linked in a verification email
 import React, { useState, useEffect } from "react";
 import GetApiRequest from "../../hooks/GetApiRequest";
 import axiosInstance from "../../utils/axiosApi";
@@ -13,8 +14,11 @@ import {
 } from "react-bootstrap";
 import AuthContext from "../../contexts/AuthContext";
 import { Link, useParams } from "react-router-dom";
+
 export default function EmailVerify(props) {
   let { challenge } = useParams();
+
+  // verify email with the current route
   const { data, error, isLoaded } = GetApiRequest("/auth/verify/" + challenge);
 
   if (error !== null) {

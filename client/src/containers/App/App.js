@@ -30,13 +30,16 @@ import ResetPassword from "../Auth/ResetPassword";
 export default function App() {
   const [authState, setAuthState] = useState(false);
   const [userState, setUserState] = useState(null);
-  LoginHook(authState, setAuthState, userState, setUserState);
+  
   // check if a token exists in memory, if so log in
-
+  LoginHook(authState, setAuthState, userState, setUserState);
+  
   return (
+    // set up contexts
     <AuthContext.Provider
       value={{ authState, setAuthState, userState, setUserState }}
     >
+      {/* routes */}
       <Router>
         <AppNavbar />
         <div>
@@ -81,6 +84,7 @@ export default function App() {
   );
 }
 
+// sub routes for posts
 function PostRoutes() {
   let match = useRouteMatch();
   let { id } = useParams();
@@ -98,6 +102,7 @@ function PostRoutes() {
   );
 }
 
+// sub routes for users
 function UserRoutes() {
   let match = useRouteMatch();
   return (
@@ -113,6 +118,7 @@ function UserRoutes() {
   );
 }
 
+// sub routes for admins
 function AdminRoutes() {
   let match = useRouteMatch();
   return (
