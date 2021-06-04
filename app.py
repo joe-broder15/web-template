@@ -30,7 +30,6 @@ bcrypt = Bcrypt(app)
 # cors config
 CORS(app)
 api = Api(app)
-# api.decorators=[cors.crossdomain(origin='*')]
 
 
 
