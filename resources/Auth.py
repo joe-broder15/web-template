@@ -107,7 +107,7 @@ class UserResource(Resource):
 
         # send an verification link to the user
         msg = Message('verify email',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
-        msg.body = "http://localhost:3000/verify/"+challenge  
+        msg.body = "http://localhost:5000/verify/confirm/"+challenge  
         mail.send(msg)  
         session.close()
 
@@ -239,7 +239,7 @@ class ResetPasswordRequest(Resource):
 
         # send an email
         msg = Message('reset password link',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
-        msg.body = "http://localhost:3000/reset/"+challenge  
+        msg.body = "http://localhost:5000/reset/"+challenge  
         mail.send(msg)  
         session.close()
         # return new ceated user

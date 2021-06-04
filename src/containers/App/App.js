@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route,
   Link,
@@ -30,27 +30,30 @@ import ResetPassword from "../Auth/ResetPassword";
 export default function App() {
   const [authState, setAuthState] = useState(false);
   const [userState, setUserState] = useState(null);
-  
+
   // check if a token exists in memory, if so log in
   LoginHook(authState, setAuthState, userState, setUserState);
-  
+
   return (
     // set up contexts
     <AuthContext.Provider
       value={{ authState, setAuthState, userState, setUserState }}
     >
       {/* routes */}
-      <Router>
+      <Router basename="/">
         <AppNavbar />
         <div>
           <Switch>
+            <Route exact path="/">
+              <PostList />
+            </Route>
             <Route path="/reset/:challenge">
               <ResetPassword />
             </Route>
             <Route path="/verify/instructions">
               <VerifyInstructions />
             </Route>
-            <Route path="/verify/:challenge">
+            <Route path="/verify/confirm/:challenge">
               <EmailVerify />
             </Route>
             <Route path="/admin">
@@ -73,9 +76,6 @@ export default function App() {
             </Route>
             <Route path="/forgotpassword">
               <ForgotPassword />
-            </Route>
-            <Route path="/">
-              <PostList />
             </Route>
           </Switch>
         </div>

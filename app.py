@@ -6,13 +6,13 @@ from flask_bcrypt import Bcrypt
 from flask_restful.utils import cors
 
 # create app
-app = Flask(__name__, static_folder="images")
+app = Flask(__name__, static_url_path="/", static_folder='build', template_folder='build')
 
 # mail config
 app.config["MAIL_SERVER"]='smtp.gmail.com'  
 app.config["MAIL_PORT"] = 465      
-app.config["MAIL_USERNAME"] = 'joebroderwebtemplate@gmail.com'  
-app.config['MAIL_PASSWORD'] = 'your password'
+app.config["MAIL_USERNAME"] = '*****'  
+app.config['MAIL_PASSWORD'] = '*****'
 app.config['MAIL_USE_TLS'] = False  
 app.config['MAIL_USE_SSL'] = True  
 mail = Mail(app) 

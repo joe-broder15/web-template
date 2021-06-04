@@ -14,7 +14,7 @@
     "web-vitals": "^1.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts build && python main.py",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -43,5 +43,6 @@
     "jquery": "^3.6.0",
     "popper.js": "^1.16.1",
     "react-bootstrap": "^1.5.2"
-  }
+  },
+  "homepage": "."
 }

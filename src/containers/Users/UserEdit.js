@@ -18,7 +18,6 @@ import {
   Spinner,
   Nav,
 } from "react-bootstrap";
-import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 
 export default function UserEdit(props) {
   let { userName } = useParams();

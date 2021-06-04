@@ -57,6 +57,6 @@ class ResetPassword(Base):
     created_date = Column(DateTime, default=datetime.datetime.utcnow) 
 
 # create session maker
-engine = create_engine('sqlite:///sqlalchemy_example.db')
+engine = create_engine('sqlite:///database.db')
 Base.metadata.create_all(engine)
 DBSession = sessionmaker(bind=engine)
