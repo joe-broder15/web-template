@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import request
+from flask import request, send_from_directory
 from marshmallow import ValidationError
 from sqlalchemy.sql.functions import user
 from werkzeug.wrappers import Response
@@ -11,6 +11,7 @@ from .Auth import token_required
 import os;
 from app import app
 
+
 UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
 
 ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
@@ -19,8 +20,9 @@ ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
 user_profile_serializer = UserProfileSchema();
 user_serializer = UserSchema();
 
-# handles upload of user avatars
+# handles user avatars
 class UserAvatar(Resource):
+    
     # upload a new user avatar
     @token_required
     def post(self, user_token, username):
@@ -56,4 +58,7 @@ class UserAvatar(Resource):
         session.commit()
 
         return HTTPStatus.OK
-        
+
+class GetUserAvatar(Resource):
+    def get(self, filename):
+        return send_from_directory(os.path.join('images', 'avatars'), filename) 

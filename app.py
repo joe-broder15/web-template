@@ -11,8 +11,8 @@ app = Flask(__name__, static_url_path="/", static_folder='build', template_folde
 # mail config
 app.config["MAIL_SERVER"]='smtp.gmail.com'  
 app.config["MAIL_PORT"] = 465      
-app.config["MAIL_USERNAME"] = '*****'  
-app.config['MAIL_PASSWORD'] = '*****'
+app.config["MAIL_USERNAME"] = '***'  
+app.config['MAIL_PASSWORD'] = '***'
 app.config['MAIL_USE_TLS'] = False  
 app.config['MAIL_USE_SSL'] = True  
 mail = Mail(app) 
@@ -22,7 +22,7 @@ app.config['UPLOAD_FOLDER'] = "images";
 app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif'])
 
 # auth config
-app.config['SECRET_KEY'] = 'your secret key'
+app.config['SECRET_KEY'] = '***'
 bcrypt = Bcrypt(app)
 
 # cors config

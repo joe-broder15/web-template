@@ -63,7 +63,7 @@ export default function UserEdit(props) {
                       Credentials
                     </Nav.Link>
                     <Nav.Link onClick={() => setEditType(3)}>Avatar</Nav.Link>
-                    {userState.privilege > 1 ? (
+                    {userState != null && userState.privilege > 1 ? (
                       <Nav.Link onClick={() => setEditType(4)}>Admin</Nav.Link>
                     ) : (
                       ""

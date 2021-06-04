@@ -95,7 +95,7 @@ class UserResource(Resource):
         session.add(user)
         session.add(profile)
         session.commit()
-
+        
         # generate verification challenge by hashing a random string with the user's email
         salt = ''.join(random.choice(string.ascii_letters) for _ in range(10))
         challenge = hashlib.sha256(((user.email + salt)).encode('utf-8')).hexdigest()
@@ -107,7 +107,7 @@ class UserResource(Resource):
 
         # send an verification link to the user
         msg = Message('verify email',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
-        msg.body = "http://localhost:5000/verify/confirm/"+challenge  
+        msg.body = "http://localhost:5000/#/verify/confirm/"+challenge  
         mail.send(msg)  
         session.close()
 
@@ -239,7 +239,7 @@ class ResetPasswordRequest(Resource):
 
         # send an email
         msg = Message('reset password link',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
-        msg.body = "http://localhost:5000/reset/"+challenge  
+        msg.body = "http://localhost:5000/#/reset/"+challenge  
         mail.send(msg)  
         session.close()
         # return new ceated user
