@@ -4,6 +4,8 @@ from flask_cors import CORS
 from flask_mail import * 
 from flask_bcrypt import Bcrypt
 from flask_restful.utils import cors
+import os
+from dotenv import load_dotenv
 
 # create app
 app = Flask(__name__, static_url_path="/", static_folder='build', template_folder='build')
@@ -11,8 +13,8 @@ app = Flask(__name__, static_url_path="/", static_folder='build', template_folde
 # mail config
 app.config["MAIL_SERVER"]='smtp.gmail.com'  
 app.config["MAIL_PORT"] = 465      
-app.config["MAIL_USERNAME"] = '***'  
-app.config['MAIL_PASSWORD'] = '***'
+app.config["MAIL_USERNAME"] = os.getenv('MAIL_USERNAME')
+app.config["MAIL_PASSWORD"] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_USE_TLS'] = False  
 app.config['MAIL_USE_SSL'] = True  
 mail = Mail(app) 
@@ -22,7 +24,7 @@ app.config['UPLOAD_FOLDER'] = "images";
 app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif'])
 
 # auth config
-app.config['SECRET_KEY'] = '***'
+app.config["SECRET_KEY"] = os.getenv('SECRET_KEY')
 bcrypt = Bcrypt(app)
 
 # cors config
