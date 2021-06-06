@@ -33,6 +33,7 @@ bcrypt = Bcrypt(app)
 CORS(app)
 # app.config['CORS_HEADERS'] = 'application/json'
 app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
+app.config['APP_URL'] = os.getenv('APP_URL')
 
 api = Api(app)
 
