@@ -29,7 +29,7 @@ bcrypt = Bcrypt(app)
 
 # cors config
 CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+# app.config['CORS_HEADERS'] = 'application/json'
 
 api = Api(app)
 
