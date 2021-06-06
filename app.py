@@ -28,7 +28,6 @@ app.config["SECRET_KEY"] = os.getenv('SECRET_KEY')
 bcrypt = Bcrypt(app)
 
 # cors config
-CORS(app)
 api = Api(app)
 
 

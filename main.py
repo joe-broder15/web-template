@@ -8,7 +8,8 @@ from resources.Uploads import UserAvatar, GetUserAvatar
 from flask import render_template
 
 import os
-
+from flask_cors import CORS
+CORS(app)
 
 # set auth and profile routes
 api.add_resource(UserResource, '/api/auth/user')
