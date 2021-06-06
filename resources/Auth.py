@@ -85,7 +85,7 @@ class UserResource(Resource):
         session = DBSession()
         try:
             # hash serialized password using bcrypt
-            pw_hash = generate_password_hash(data['password'], 10)
+            pw_hash = generate_password_hash(data['password'], 10).decode('utf-8')
             user = User(username=data['username'], password_hash=pw_hash, email=data['email'])
             profile = UserProfile(username=data['username']);
 
@@ -152,7 +152,7 @@ class TokenResource(Resource):
             return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
         # check password hash and encode token
-        if check_password_hash(user.password_hash, data['password'].encode('utf-8')):
+        if check_password_hash(user.password_hash, data['password']):
             token = jwt.encode({
                 'username': user.username,
                 'email': user.email,
@@ -264,7 +264,7 @@ class PasswordReset(Resource):
             return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
         # set new password
-        user.password_hash = generate_password_hash(request.get_json()['password'].encode('utf-8'), 10)
+        user.password_hash = generate_password_hash(request.get_json()['password'], 10).decode('utf-8')
         session.delete(resetPassword)
         session.commit()
         session.close()
