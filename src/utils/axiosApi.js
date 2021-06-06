@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://127.0.0.1:5000/api",
+  baseURL: "http://web-template-joebroder.herokuapp.com/api",
   timeout: 10000,
   headers: {
     Authorization: "JWT " + localStorage.getItem("access_token"),
