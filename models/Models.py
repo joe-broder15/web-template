@@ -15,7 +15,7 @@ class User(Base):
     __tablename__ = 'user'
     username = Column(String(20), primary_key=True, unique=True)
     email = Column(String(60), default="post text", nullable=False, unique=True)
-    password_hash = Column(String(60), default="post text", nullable=False)
+    password_hash = Column(String(250), default="password", nullable=False)
     privilege = Column(Integer, nullable=False, default=1)
     verified = Column(Boolean, nullable=False, default=False)
 
