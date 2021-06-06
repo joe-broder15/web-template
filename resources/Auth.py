@@ -152,7 +152,7 @@ class TokenResource(Resource):
             return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
         # check password hash and encode token
-        if check_password_hash(user.password_hash, data['password']):
+        if check_password_hash(user.password_hash, data['password'].encode('utf-8')):
             token = jwt.encode({
                 'username': user.username,
                 'email': user.email,
@@ -264,7 +264,7 @@ class PasswordReset(Resource):
             return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
         # set new password
-        user.password_hash = generate_password_hash(request.get_json()['password'], 10)
+        user.password_hash = generate_password_hash(request.get_json()['password'].encode('utf-8'), 10)
         session.delete(resetPassword)
         session.commit()
         session.close()
