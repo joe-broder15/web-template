@@ -5,6 +5,7 @@ from sqlalchemy.sql.expression import false, true
 import datetime
 
 from app import app
+import os
 
 # SQL alchemy base model
 Base = declarative_base()
@@ -59,6 +60,9 @@ class ResetPassword(Base):
     created_date = Column(DateTime, default=datetime.datetime.utcnow) 
 
 # create session maker
-engine = create_engine(app.config['DATABASE_URL'])
+uri = os.getenv("DATABASE_URL")
+if uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
+engine = create_engine(uri)
 Base.metadata.create_all(engine)
 DBSession = sessionmaker(bind=engine)
