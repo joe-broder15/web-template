@@ -7,6 +7,8 @@ from flask_restful.utils import cors
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
+
 # create app
 app = Flask(__name__, static_url_path="/", static_folder='build', template_folder='build')
 
@@ -30,6 +32,7 @@ bcrypt = Bcrypt(app)
 # cors config
 CORS(app)
 # app.config['CORS_HEADERS'] = 'application/json'
+app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
 
 api = Api(app)
 

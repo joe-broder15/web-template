@@ -4,6 +4,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import false, true
 import datetime
 
+from app import app
+
 # SQL alchemy base model
 Base = declarative_base()
 
@@ -57,6 +59,6 @@ class ResetPassword(Base):
     created_date = Column(DateTime, default=datetime.datetime.utcnow) 
 
 # create session maker
-engine = create_engine('sqlite:///database.db')
+engine = create_engine(app.config['DATABASE_URL'])
 Base.metadata.create_all(engine)
 DBSession = sessionmaker(bind=engine)
