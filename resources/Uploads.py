@@ -42,9 +42,9 @@ class UserAvatar(Resource):
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
         # check that upload folder exists
-        target=os.path.join(UPLOAD_FOLDER, "avatars")
-        if not os.path.isdir(target):
-            os.mkdir(target)
+        # target=os.path.join(UPLOAD_FOLDER, "avatars")
+        # if not os.path.isdir(target):
+        #     os.mkdir(target)
         
         file = request.files['file'] 
 
