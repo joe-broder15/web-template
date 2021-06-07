@@ -45,8 +45,7 @@ export default function UserDetail(props) {
                   data.avatar == null
                     ? "/default_avatar.jpg"
                     : new URL(
-                        "http://localhost:5000/" +
-                          data.avatar.replace("\\", "/").replace("\\", "/")
+                        data.avatar
                       )
                 }
                 style={{

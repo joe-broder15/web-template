@@ -4,7 +4,7 @@ from app import app, api, mail
 from resources.Auth import UserResource, TokenResource, EmailVerify, ResetPasswordRequest, PasswordReset, GetUserCredentials, UserPermission
 from resources.Post import PostList, PostDetail, PostUser
 from resources.User import UserDetail, UserList
-from resources.Uploads import UserAvatar, GetUserAvatar
+from resources.Uploads import UserAvatar
 from flask import render_template
 
 import os
@@ -20,7 +20,6 @@ api.add_resource(PasswordReset, '/api/auth/reset/<challenge>')
 api.add_resource(UserList, '/api/user')
 api.add_resource(UserDetail, '/api/user/<username>')
 api.add_resource(UserAvatar, '/api/upload/avatar/<username>')
-api.add_resource(GetUserAvatar, '/images/avatars/<filename>')
 
 # post routes (modify)
 api.add_resource(PostList, '/api/post')

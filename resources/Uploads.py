@@ -18,15 +18,14 @@ import boto3
 
 
 UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
-
 ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
-
+ACCESS_KEY = app.config['S3_ACCESS_KEY']
+SECRET_KEY = app.config['S3_SECRET_KEY']
 # serializer for post class
 user_profile_serializer = UserProfileSchema();
 user_serializer = UserSchema();
 
-ACCESS_KEY = app.config['S3_ACCESS_KEY']
-SECRET_KEY = app.config['S3_SECRET_KEY']
+
 
 # handles user avatars
 class UserAvatar(Resource):
@@ -73,6 +72,4 @@ class UserAvatar(Resource):
 
         return HTTPStatus.OK
 
-class GetUserAvatar(Resource):
-    def get(self, filename):
-        return send_from_directory(os.path.join('images', 'avatars'), filename) 
+
