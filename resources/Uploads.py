@@ -13,8 +13,7 @@ from app import app
 import cloudinary.uploader
 from flask import jsonify
 
-cloudinary.config(cloud_name = os.getenv('CLOUDINARY_URL'), api_key=os.getenv('API_KEY'), 
-    api_secret=os.getenv('API_SECRET'))
+
 
 
 UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
@@ -24,6 +23,9 @@ ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
 # serializer for post class
 user_profile_serializer = UserProfileSchema();
 user_serializer = UserSchema();
+
+ACCESS_KEY = app.config['S3_ACCESS_KEY']
+SECRET_KEY = app.config['S3_SECRET_KEY']
 
 # handles user avatars
 class UserAvatar(Resource):
@@ -42,27 +44,30 @@ class UserAvatar(Resource):
         if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
-        # check that upload folder exists
-        target=os.path.join(UPLOAD_FOLDER, "avatars")
-        if not os.path.isdir(target):
-            os.mkdir(target)
-        
+      
+        # get file  
         file = request.files['file'] 
 
         # check if file is of the allowed types
         if(file.filename.split(".")[1] not in ALLOWED_EXTENSIONS):
             return {"errors": "invalid file type"}, HTTPStatus.BAD_REQUEST
+        
+        # create filename
+        bucket_name = "web-template-joebroder"
+        key = ''.join(random.choice(string.ascii_letters) for _ in range(20)) + "." + file.filename.split(".")[1]
 
-        # save file
-        filename = secure_filename(file.filename)
-        destination=os.path.join(target, filename)
-        file.save(destination)
-        file.filename = secure_filename(file.filename)
-        # res = cloudinary.uploader.upload(file)
-        # # print(res)
+        # create aws client
+        s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
+                      aws_secret_access_key=SECRET_KEY)
+
+        # upload file
+        s3.upload_fileobj(file, bucket_name, key)
+
+        location = s3.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
+        url = "https://s3-%s.amazonaws.com/%s/%s" % (location, bucket_name, key)
 
         # set pfp
-        profile.avatar = destination
+        profile.avatar = url
         session.commit()
 
         return HTTPStatus.OK

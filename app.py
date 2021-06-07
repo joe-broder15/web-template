@@ -35,6 +35,9 @@ CORS(app)
 app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
 app.config['APP_URL'] = os.getenv('APP_URL')
 
+app.config['S3_ACCESS_KEY'] = os.getenv('S3_ACCESS_KEY')
+app.config['S3_SECRET_KEY'] = os.getenv('S3_SECRET_KEY')
+
 api = Api(app)
 
 
