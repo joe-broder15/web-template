@@ -10,7 +10,7 @@ from http import HTTPStatus
 from .Auth import token_required
 import os;
 from app import app
-import cloudinary
+import cloudinary.uploader
 
 cloudinary.config(cloud_name = os.getenv('CLOUDINARY_URL'), api_key=os.getenv('API_KEY'), 
     api_secret=os.getenv('API_SECRET'))
