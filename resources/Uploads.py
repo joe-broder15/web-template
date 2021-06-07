@@ -11,6 +11,7 @@ from .Auth import token_required
 import os;
 from app import app
 import cloudinary.uploader
+from flask import jsonify
 
 cloudinary.config(cloud_name = os.getenv('CLOUDINARY_URL'), api_key=os.getenv('API_KEY'), 
     api_secret=os.getenv('API_SECRET'))
@@ -58,7 +59,7 @@ class UserAvatar(Resource):
         # file.save(destination)
         # file.filename = secure_filename(file.filename)
         res = cloudinary.uploader.upload(file)
-        print(res)
+        # print(res)
 
         # set pfp
         profile.avatar = destination
