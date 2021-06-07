@@ -1,3 +1,4 @@
+from boto3.session import Session
 from flask_restful import Resource
 from flask import request, send_from_directory
 from marshmallow import ValidationError
@@ -21,6 +22,7 @@ UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
 ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
 ACCESS_KEY = app.config['S3_ACCESS_KEY']
 SECRET_KEY = app.config['S3_SECRET_KEY']
+BUCKET_NAME = app.config['S3_BUCKET_NAME']
 # serializer for post class
 user_profile_serializer = UserProfileSchema();
 user_serializer = UserSchema();
@@ -61,7 +63,7 @@ class UserAvatar(Resource):
                       aws_secret_access_key=SECRET_KEY)
 
         # upload file
-        s3.upload_fileobj(file, bucket_name, key)
+        s3.upload_fileobj(file, BUCKET_NAME, key)
 
         location = s3.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
         url = "https://%s.s3-%s.amazonaws.com/%s" % (bucket_name, location, key)
@@ -69,6 +71,7 @@ class UserAvatar(Resource):
         # set pfp
         profile.avatar = url
         session.commit()
+        session.close()
 
         return HTTPStatus.OK
 
