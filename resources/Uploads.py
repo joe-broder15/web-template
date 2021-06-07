@@ -10,6 +10,10 @@ from http import HTTPStatus
 from .Auth import token_required
 import os;
 from app import app
+import cloudinary
+
+cloudinary.config(cloud_name = os.getenv('CLOUDINARY_URL'), api_key=os.getenv('API_KEY'), 
+    api_secret=os.getenv('API_SECRET'))
 
 
 UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
@@ -49,9 +53,12 @@ class UserAvatar(Resource):
             return {"errors": "invalid file type"}, HTTPStatus.BAD_REQUEST
 
         # save file
-        filename = secure_filename(file.filename)
-        destination=os.path.join(target, filename)
-        file.save(destination)
+        # filename = secure_filename(file.filename)
+        # destination=os.path.join(target, filename)
+        # file.save(destination)
+        file.filename = secure_filename(file.filename)
+        res = cloudinary.uploader.upload(file)
+        print(res)
 
         # set pfp
         profile.avatar = destination
