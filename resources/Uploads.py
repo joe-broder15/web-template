@@ -64,7 +64,7 @@ class UserAvatar(Resource):
         s3.upload_fileobj(file, bucket_name, key)
 
         location = s3.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
-        url = "https://s3-%s.amazonaws.com/%s/%s" % (location, bucket_name, key)
+        url = "https://%s.s3-%s.amazonaws.com/%s" % (bucket_name, location, key)
 
         # set pfp
         profile.avatar = url
