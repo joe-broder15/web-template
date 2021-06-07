@@ -43,23 +43,23 @@ class UserAvatar(Resource):
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
         # check that upload folder exists
-        # target=os.path.join(UPLOAD_FOLDER, "avatars")
-        # if not os.path.isdir(target):
-        #     os.mkdir(target)
+        target=os.path.join(UPLOAD_FOLDER, "avatars")
+        if not os.path.isdir(target):
+            os.mkdir(target)
         
         file = request.files['file'] 
 
         # check if file is of the allowed types
-        # if(file.filename.split(".")[1] not in ALLOWED_EXTENSIONS):
-        #     return {"errors": "invalid file type"}, HTTPStatus.BAD_REQUEST
+        if(file.filename.split(".")[1] not in ALLOWED_EXTENSIONS):
+            return {"errors": "invalid file type"}, HTTPStatus.BAD_REQUEST
 
         # save file
-        # filename = secure_filename(file.filename)
-        # destination=os.path.join(target, filename)
-        # file.save(destination)
-        # file.filename = secure_filename(file.filename)
-        res = cloudinary.uploader.upload(file)
-        # print(res)
+        filename = secure_filename(file.filename)
+        destination=os.path.join(target, filename)
+        file.save(destination)
+        file.filename = secure_filename(file.filename)
+        # res = cloudinary.uploader.upload(file)
+        # # print(res)
 
         # set pfp
         profile.avatar = destination
