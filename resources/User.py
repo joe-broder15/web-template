@@ -17,6 +17,7 @@ class UserList(Resource):
     def get(self):
         session = DBSession()
         users=session.query(UserProfile).all()
+        session.close()
         return user_profile_serializer.dump(users,many=True), HTTPStatus.OK
 
 
@@ -29,9 +30,11 @@ class UserDetail(Resource):
         try:
             profile=session.query(UserProfile).filter(UserProfile.username == username).one()
         except:
+            session.close()
             return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
         # return serialized post
+        session.close()
         return user_profile_serializer.dump(profile), HTTPStatus.OK
 
     # update an individual user profile
@@ -42,10 +45,12 @@ class UserDetail(Resource):
         try:
             profile=session.query(UserProfile).filter(UserProfile.username == username).one()
         except:
+            session.close()
             return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
         # check if post belongs to the authenticated user
         if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
+            session.close()
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
         # serialize inputs
@@ -53,6 +58,7 @@ class UserDetail(Resource):
         try:
             data = user_profile_serializer.load(request.get_json())
         except ValidationError as err:
+            session.close()
             return {"errors": err.messages}, 422
 
         # modify post
@@ -62,6 +68,7 @@ class UserDetail(Resource):
         profile.private = data['private']
         profile.birthday = data['birthday']
         session.commit()
+        session.close()
 
         # return post
         return user_profile_serializer.dump(profile), HTTPStatus.OK
@@ -76,16 +83,19 @@ class UserDetail(Resource):
             profile=session.query(UserProfile).filter(UserProfile.username == username).one()
             user=session.query(User).filter(User.username == user_token['username']).one()
         except:
+            session.close()
             return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
         # check if post belongs to the authenticated user
         if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
+            session.close()
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
         # delete
         session.delete(profile)
         session.delete(user)
         session.commit()
+        session.close()
 
         # return status
         return "success", HTTPStatus.OK

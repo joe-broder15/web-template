@@ -40,10 +40,12 @@ class UserAvatar(Resource):
         try:
             profile=session.query(UserProfile).filter(UserProfile.username == username).one()
         except:
+            session.close()
             return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
         
         # check if post belongs to the authenticated user
         if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
+            session.close()
             return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
         
       
@@ -52,6 +54,7 @@ class UserAvatar(Resource):
 
         # check if file is of the allowed types
         if(file.filename.split(".")[1] not in ALLOWED_EXTENSIONS):
+            session.close()
             return {"errors": "invalid file type"}, HTTPStatus.BAD_REQUEST
         
         # create filename
