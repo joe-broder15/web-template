@@ -145,6 +145,7 @@ class TokenResource(Resource):
         try:
             user = session.query(User).filter(User.email == data['email']).one()
         except:
+            session.close()
             return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
 
         # check if user is verified
@@ -187,6 +188,7 @@ class GetUserCredentials(Resource):
         try:
             user = session.query(User).filter(User.username == username).one()
         except:
+            session.close()
             return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
 
         session.close()
@@ -203,6 +205,7 @@ class EmailVerify(Resource):
             ev = session.query(EmailVerification).filter(EmailVerification.challenge == challenge).one()
             user = session.query(User).filter(User.username == ev.username).one()
         except:
+            session.close()
             return {"errors": "challenge or user not found"}, HTTPStatus.NOT_FOUND
 
         # set verified and delete record
@@ -221,6 +224,7 @@ class ResetPasswordRequest(Resource):
         try:
             user = session.query(User).filter(User.email == request.get_json()['email']).one()
         except:
+            session.close()
             {"errors": "email not found"}, HTTPStatus.NOT_FOUND
 
         # delete existing challenge if one exists
@@ -229,6 +233,7 @@ class ResetPasswordRequest(Resource):
             session.delete(resetPassword)
             session.commit()
         except:
+            session.close()
             None
         
         # generate verification challenge
@@ -257,10 +262,12 @@ class PasswordReset(Resource):
             user = session.query(User).filter(User.username == resetPassword.username).one()
             print(resetPassword)
         except:
+            session.close()
             {"errors": "challenge or user not found"}, HTTPStatus.NOT_FOUND
         
         # make sure user is verified
         if(user.verified == False):
+            session.close()
             return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
         # set new password
@@ -283,6 +290,7 @@ class UserPermission(Resource):
         try:
             user = session.query(User).filter(User.username == username).one()
         except:
+            session.close()
             {"errors": "user not found"}, HTTPStatus.NOT_FOUND
         
         # set new privilege
