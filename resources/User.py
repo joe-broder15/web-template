@@ -86,7 +86,9 @@ class UserDetail(Resource):
             # delete
             for p in posts:
                 session.delete(p)
+            session.commit()
             session.delete(profile)
+            session.commit()
             session.delete(user)
             session.commit()
             # return status
