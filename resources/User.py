@@ -83,13 +83,14 @@ class UserDetail(Resource):
             if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
                 return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
-            # delete
+            # delete posts, profile, and credentials
             for p in posts:
                 session.delete(p)
             session.commit()
             session.delete(profile)
-            session.commit()
+            session.commit() 
             session.delete(user)
             session.commit()
+
             # return status
             return "success", HTTPStatus.OK
