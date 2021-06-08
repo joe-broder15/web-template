@@ -113,19 +113,6 @@ class UserResource(Resource):
 
             # return new ceated user
             return user_serializer.dump(user), HTTPStatus.CREATED
-    
-    # todo
-    # delete a user
-    @token_required
-    def delete(self, user_token):
-        # blacklist token and delete user
-        with DBSession() as session:
-            token = BlackListToken(token=request.headers['Authorization'])
-            user = session.query(User).filter(User.username == user_token['username']).one()
-            session.delete(user)
-            session.add(token)
-            session.commit()
-            return HTTPStatus.OK
 
 # issues and blacklists tokens
 class TokenResource(Resource):
@@ -272,7 +259,6 @@ class UserPermission(Resource):
                 return {"errors": "unauthorized"}, HTTPStatus.UNAUTHORIZED
             
             # get and return user data
-            session = DBSession()
             try:
                 user = session.query(User).filter(User.username == username).one()
             except:

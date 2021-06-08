@@ -3,8 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import false, true
 import datetime
-
-from app import app
 import os
 
 # SQL alchemy base model
@@ -33,7 +31,6 @@ class UserProfile(Base):
 
 # post model, main data object for this app
 class Post(Base):
-    #define our table
     __tablename__ = 'post'
     id = Column(Integer, primary_key=True)
     text = Column(String(20), default="post text", nullable=False)
