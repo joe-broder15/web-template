@@ -69,7 +69,7 @@ class UserAvatar(Resource):
         url = "https://%s.s3-%s.amazonaws.com/%s" % (bucket_name, location, key)
 
         # delete old pfp
-        s3.delete_object(Bucket = BUCKET_NAME,Key=key)
+        s3.delete_object(Bucket = BUCKET_NAME,Key=profile.avatar.split("/")[-1])
 
         # set pfp
         profile.avatar = url
