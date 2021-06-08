@@ -15,10 +15,9 @@ user_serializer = UserSchema();
 class UserList(Resource):
     # get list of all user profiles
     def get(self):
-        session = DBSession()
-        users=session.query(UserProfile).all()
-        session.close()
-        return user_profile_serializer.dump(users,many=True), HTTPStatus.OK
+        with DBSession() as session:
+            users=session.query(UserProfile).all()
+            return user_profile_serializer.dump(users,many=True), HTTPStatus.OK
 
 
 # handles public profile informatiom
@@ -26,76 +25,67 @@ class UserDetail(Resource):
     # get an individual post
     def get(self, username):
         # get post
-        session = DBSession()
-        try:
-            profile=session.query(UserProfile).filter(UserProfile.username == username).one()
-        except:
-            session.close()
-            return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
-        
-        # return serialized post
-        session.close()
-        return user_profile_serializer.dump(profile), HTTPStatus.OK
+        with DBSession() as session:
+            try:
+                profile=session.query(UserProfile).filter(UserProfile.username == username).one()
+            except:
+                return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
+            
+            # return serialized post
+            return user_profile_serializer.dump(profile), HTTPStatus.OK
 
     # update an individual user profile
     @token_required
     def put(self, username, user_token):
         # get post from db
-        session = DBSession()
-        try:
-            profile=session.query(UserProfile).filter(UserProfile.username == username).one()
-        except:
-            session.close()
-            return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
-        
-        # check if post belongs to the authenticated user
-        if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
-            session.close()
-            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        
-        # serialize inputs
-        print(request.get_json())
-        try:
-            data = user_profile_serializer.load(request.get_json())
-        except ValidationError as err:
-            session.close()
-            return {"errors": err.messages}, 422
+        with DBSession() as session:
+            try:
+                profile=session.query(UserProfile).filter(UserProfile.username == username).one()
+            except:
+                return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
+            
+            # check if post belongs to the authenticated user
+            if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
+                return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+            
+            # serialize inputs
+            print(request.get_json())
+            try:
+                data = user_profile_serializer.load(request.get_json())
+            except ValidationError as err:
+                return {"errors": err.messages}, 422
 
-        # modify post
-        profile.name = data['name']
-        profile.bio = data['bio']
-        profile.gender = data['gender']
-        profile.private = data['private']
-        profile.birthday = data['birthday']
-        session.commit()
-        session.close()
+            # modify post
+            profile.name = data['name']
+            profile.bio = data['bio']
+            profile.gender = data['gender']
+            profile.private = data['private']
+            profile.birthday = data['birthday']
+            session.commit()
 
-        # return post
-        return user_profile_serializer.dump(profile), HTTPStatus.OK
+            # return post
+            return user_profile_serializer.dump(profile), HTTPStatus.OK
     
     # delete a user
     @token_required
     def delete(self, username, user_token):
 
         # get user
-        session = DBSession()
-        try:
-            profile=session.query(UserProfile).filter(UserProfile.username == username).one()
-            user=session.query(User).filter(User.username == user_token['username']).one()
-        except:
-            session.close()
-            return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
-        
-        # check if post belongs to the authenticated user
-        if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
-            session.close()
-            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+        with DBSession() as session:
+            try:
+                profile=session.query(UserProfile).filter(UserProfile.username == username).one()
+                user=session.query(User).filter(User.username == user_token['username']).one()
+            except:
+                return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
+            
+            # check if post belongs to the authenticated user
+            if profile.username != user_token['username'] and  user_token['privilege'] <= 1:
+                return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
-        # delete
-        session.delete(profile)
-        session.delete(user)
-        session.commit()
-        session.close()
+            # delete
+            session.delete(profile)
+            session.delete(user)
+            session.commit()
 
-        # return status
-        return "success", HTTPStatus.OK
+            # return status
+            return "success", HTTPStatus.OK
