@@ -84,11 +84,9 @@ class UserDetail(Resource):
                 return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
             # delete
-            # session.delete(profile)
-            
-            # for p in posts:
-            #     session.delete(p)
-            
+            for p in posts:
+                session.delete(p)
+            session.delete(profile)
             session.delete(user)
             session.commit()
             # return status
