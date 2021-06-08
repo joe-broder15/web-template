@@ -2,7 +2,7 @@ from flask_restful import Resource
 from flask import request
 from marshmallow import ValidationError
 from sqlalchemy.sql.functions import user
-from models.Models import User, UserProfile, DBSession
+from models.Models import User, UserProfile, Post, DBSession
 from serializers.Serializers import UserProfileSchema, UserSchema
 from http import HTTPStatus
 from .Auth import token_required
@@ -75,6 +75,7 @@ class UserDetail(Resource):
             try:
                 profile=session.query(UserProfile).filter(UserProfile.username == username).one()
                 user=session.query(User).filter(User.username == user_token['username']).one()
+                posts = session.query(Post).filter(Post.user == user.username)
             except:
                 return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
             
@@ -85,6 +86,7 @@ class UserDetail(Resource):
             # delete
             session.delete(profile)
             session.delete(user)
+            session.delete(posts)
             session.commit()
 
             # return status
