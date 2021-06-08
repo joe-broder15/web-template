@@ -34,4 +34,9 @@ def catch_all(path):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
+    if "IS_DEV" not in os.environ:
+        print("running production")
+        app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
+    else:
+        print("running dev")
+        app.run(debug=True)
