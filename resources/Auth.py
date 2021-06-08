@@ -24,33 +24,34 @@ user_serializer = UserSchema();
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = None
-        # jwt is passed in the request header
-        if 'Authorization' in request.headers:
-            token = request.headers['Authorization']
+        with DBSession() as session:
+            token = None
+            # jwt is passed in the request header
+            if 'Authorization' in request.headers:
+                token = request.headers['Authorization']
 
-        # return 401 if token is not passed
-        if not token:
-            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        
-        # check if jwt
-        if token.split(" ")[0] != "JWT":
-            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        token = token.split(" ")[1]
+            # return 401 if token is not passed
+            if not token:
+                return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+            
+            # check if jwt
+            if token.split(" ")[0] != "JWT":
+                return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+            token = token.split(" ")[1]
 
-        # check if token is blacklisted
-        session = DBSession()
-        if session.query(BlackListToken).filter(BlackListToken.token == token).first() != None:
-            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        
-        #try to decode token
-        try:
-            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        except:
-            return {"errors": "Bad Token"}, HTTPStatus.UNAUTHORIZED
+            # check if token is blacklisted
+            
+            if session.query(BlackListToken).filter(BlackListToken.token == token).first() != None:
+                return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+            
+            #try to decode token
+            try:
+                data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            except:
+                return {"errors": "Bad Token"}, HTTPStatus.UNAUTHORIZED
 
-        # call wrapped function with decoded token as an arg
-        return  f(user_token = data, *args, **kwargs)
+            # call wrapped function with decoded token as an arg
+            return  f(user_token = data, *args, **kwargs)
    
     return decorated
 
@@ -61,73 +62,70 @@ class UserResource(Resource):
     # get username and email
     @token_required
     def get(self, user_token):
-        session = DBSession()
+        with DBSession() as session:
 
-        # try to get a user
-        try:
-            user = session.query(User).filter(User.username == user_token['username']).one()
-        except:
-            return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
+            # try to get a user
+            try:
+                user = session.query(User).filter(User.username == user_token['username']).one()
+            except:
+                return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
 
-        # close session and return
-        session.close()
-        return user_serializer.dump(user), HTTPStatus.OK
+            # close session and return
+            return user_serializer.dump(user), HTTPStatus.OK
 
     # register a new user
     def post(self):
         # serialize request data
-        try:
-            data = user_serializer.load(request.get_json())
-        except ValidationError as err:
-            return {"errors": err.messages}, HTTPStatus.BAD_REQUEST
+        with DBSession() as session:
+            try:
+                data = user_serializer.load(request.get_json())
+            except ValidationError as err:
+                return {"errors": err.messages}, HTTPStatus.BAD_REQUEST
 
-        # create new User
-        session = DBSession()
-        try:
-            # hash serialized password using bcrypt
-            pw_hash = generate_password_hash(data['password'], 10).decode('utf-8')
-            user = User(username=data['username'], password_hash=pw_hash, email=data['email'])
-            profile = UserProfile(username=data['username']);
+            # create new User
+            try:
+                # hash serialized password using bcrypt
+                pw_hash = generate_password_hash(data['password'], 10).decode('utf-8')
+                user = User(username=data['username'], password_hash=pw_hash, email=data['email'])
+                profile = UserProfile(username=data['username']);
 
-        except:
-            return {"errors": "bad credentials"}, HTTPStatus.BAD_REQUEST
-        
-        # add user to db
-        session.add(user)
-        session.add(profile)
-        session.commit()
-        
-        # generate verification challenge by hashing a random string with the user's email
-        salt = ''.join(random.choice(string.ascii_letters) for _ in range(10))
-        challenge = hashlib.sha256(((user.email + salt)).encode('utf-8')).hexdigest()
+            except:
+                return {"errors": "bad credentials"}, HTTPStatus.BAD_REQUEST
+            
+            # add user to db
+            session.add(user)
+            session.add(profile)
+            session.commit()
+            
+            # generate verification challenge by hashing a random string with the user's email
+            salt = ''.join(random.choice(string.ascii_letters) for _ in range(10))
+            challenge = hashlib.sha256(((user.email + salt)).encode('utf-8')).hexdigest()
 
-        # create a verification challenge in the database
-        ev = EmailVerification(username = user.username, challenge=challenge);
-        session.add(ev)
-        session.commit()
+            # create a verification challenge in the database
+            ev = EmailVerification(username = user.username, challenge=challenge);
+            session.add(ev)
+            session.commit()
 
-        # send an verification link to the user
-        msg = Message('verify email',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
-        msg.body = "http://"+APP_URL+"/#/verify/confirm/"+challenge  
-        mail.send(msg)  
-        session.close()
+            # send an verification link to the user
+            msg = Message('verify email',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
+            msg.body = "http://"+APP_URL+"/#/verify/confirm/"+challenge  
+            mail.send(msg)
 
-        # return new ceated user
-        return user_serializer.dump(user), HTTPStatus.CREATED
+            # return new ceated user
+            return user_serializer.dump(user), HTTPStatus.CREATED
     
     # todo
     # delete a user
     @token_required
     def delete(self, user_token):
         # blacklist token and delete user
-        session = DBSession()
-        token = BlackListToken(token=request.headers['Authorization'])
-        user = session.query(User).filter(User.username == user_token['username']).one()
-        session.delete(user)
-        session.add(token)
-        session.commit()
-        session.close()
-        return HTTPStatus.OK
+        with DBSession() as session:
+            token = BlackListToken(token=request.headers['Authorization'])
+            user = session.query(User).filter(User.username == user_token['username']).one()
+            session.delete(user)
+            session.add(token)
+            session.commit()
+            return HTTPStatus.OK
 
 # issues and blacklists tokens
 class TokenResource(Resource):
@@ -135,170 +133,156 @@ class TokenResource(Resource):
     # login with credentials and get a new token
     def post(self):
         # serialize request data
-        try:
-            data = user_serializer.load(request.get_json())
-        except ValidationError as err:
-            return {"errors": err.messages}, HTTPStatus.BAD_REQUEST
+        with DBSession() as session:
+            try:
+                data = user_serializer.load(request.get_json())
+            except ValidationError as err:
+                return {"errors": err.messages}, HTTPStatus.BAD_REQUEST
 
-        # fetch user data
-        session = DBSession()
-        try:
-            user = session.query(User).filter(User.email == data['email']).one()
-        except:
-            session.close()
-            return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
+            # fetch user data
+            try:
+                user = session.query(User).filter(User.email == data['email']).one()
+            except:
+                return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
 
-        # check if user is verified
-        if(user.verified == False):
-            return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
+            # check if user is verified
+            if(user.verified == False):
+                return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
-        # check password hash and encode token
-        if check_password_hash(user.password_hash, data['password']):
-            token = jwt.encode({
-                'username': user.username,
-                'email': user.email,
-                'privilege': user.privilege,
-                'exp' : datetime.utcnow() + timedelta(minutes = 30)
-            }, SECRET_KEY, algorithm="HS256")
-            session.close()
-            return token, HTTPStatus.ACCEPTED
+            # check password hash and encode token
+            if check_password_hash(user.password_hash, data['password']):
+                token = jwt.encode({
+                    'username': user.username,
+                    'email': user.email,
+                    'privilege': user.privilege,
+                    'exp' : datetime.utcnow() + timedelta(minutes = 30)
+                }, SECRET_KEY, algorithm="HS256")
+                return token, HTTPStatus.ACCEPTED
 
-        session.close()
-        return {"errors": "invalid password"}, HTTPStatus.FORBIDDEN
+            return {"errors": "invalid password"}, HTTPStatus.FORBIDDEN
     
     # delete user token
     @token_required
     def delete(self, user_token):
-        session = DBSession()
-        token = BlackListToken(token=request.headers['Authorization'].split(" ")[1])
-        session.add(token)
-        session.close()
-        return HTTPStatus.OK
+        with DBSession() as session:
+            token = BlackListToken(token=request.headers['Authorization'].split(" ")[1])
+            session.add(token)
+            return HTTPStatus.OK
 
 # get the credentials of a specific user
 class GetUserCredentials(Resource):
     @token_required
     def get(self, user_token, username):
-        # check if the user owns the desired credentials or is an admin
-        if(username != user_token['username'] and user_token['privilege'] <= 1):
-            return {"errors": "unautnorized"}, HTTPStatus.UNAUTHORIZED
-        
-        # get credentials
-        session = DBSession()
-        try:
-            user = session.query(User).filter(User.username == username).one()
-        except:
-            session.close()
-            return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
+        with DBSession() as session:
+            # check if the user owns the desired credentials or is an admin
+            if(username != user_token['username'] and user_token['privilege'] <= 1):
+                return {"errors": "unautnorized"}, HTTPStatus.UNAUTHORIZED
+            
+            # get credentials
+            session = DBSession()
+            try:
+                user = session.query(User).filter(User.username == username).one()
+            except:
+                return {"errors": "user not found"}, HTTPStatus.NOT_FOUND
 
-        session.close()
-
-        return user_serializer.dump(user), HTTPStatus.OK
+            return user_serializer.dump(user), HTTPStatus.OK
 
 # used for email verification
 class EmailVerify(Resource):
     def get(self, challenge):
-        session = DBSession()
+        
+        with DBSession() as session:
 
-        # search db for the desired challenge
-        try:
-            ev = session.query(EmailVerification).filter(EmailVerification.challenge == challenge).one()
-            user = session.query(User).filter(User.username == ev.username).one()
-        except:
-            session.close()
-            return {"errors": "challenge or user not found"}, HTTPStatus.NOT_FOUND
+            # search db for the desired challenge
+            try:
+                ev = session.query(EmailVerification).filter(EmailVerification.challenge == challenge).one()
+                user = session.query(User).filter(User.username == ev.username).one()
+            except:
+                return {"errors": "challenge or user not found"}, HTTPStatus.NOT_FOUND
 
-        # set verified and delete record
-        user.verified = True
-        session.delete(ev)
-        session.commit()
-        session.close()
-
-        return HTTPStatus.OK
+            # set verified and delete record
+            user.verified = True
+            session.delete(ev)
+            session.commit()
+            
+            return HTTPStatus.OK
 
 # used to reset passwords
 class ResetPasswordRequest(Resource):
     def post(self):
-        session = DBSession()
-        # check if user exists
-        try:
-            user = session.query(User).filter(User.email == request.get_json()['email']).one()
-        except:
-            session.close()
-            {"errors": "email not found"}, HTTPStatus.NOT_FOUND
+        with DBSession() as session:
+            # check if user exists
+            try:
+                user = session.query(User).filter(User.email == request.get_json()['email']).one()
+            except:
+                {"errors": "email not found"}, HTTPStatus.NOT_FOUND
 
-        # delete existing challenge if one exists
-        try:
-            resetPassword = session.query(ResetPassword).filter(ResetPassword.username == user.username).one()
-            session.delete(resetPassword)
+            # delete existing challenge if one exists
+            try:
+                resetPassword = session.query(ResetPassword).filter(ResetPassword.username == user.username).one()
+                session.delete(resetPassword)
+                session.commit()
+            except:
+                None
+            
+            # generate verification challenge
+            salt = ''.join(random.choice(string.ascii_letters) for _ in range(10))
+            challenge = hashlib.sha256(((user.email + salt)).encode('utf-8')).hexdigest()
+            ev = ResetPassword(username = user.username, challenge=challenge);
+            session.add(ev)
             session.commit()
-        except:
-            session.close()
-            None
-        
-        # generate verification challenge
-        salt = ''.join(random.choice(string.ascii_letters) for _ in range(10))
-        challenge = hashlib.sha256(((user.email + salt)).encode('utf-8')).hexdigest()
-        ev = ResetPassword(username = user.username, challenge=challenge);
-        session.add(ev)
-        session.commit()
 
-        # send an email
-        msg = Message('reset password link',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
-        msg.body = "http://"+APP_URL+"/#/reset/"+challenge  
-        mail.send(msg)  
-        session.close()
-        # return new ceated user
-        return user_serializer.dump(user), HTTPStatus.OK
+            # send an email
+            msg = Message('reset password link',sender = app.config['MAIL_USERNAME'], recipients = [user.email])  
+            msg.body = "http://"+APP_URL+"/#/reset/"+challenge  
+            mail.send(msg)  
+            # return new ceated user
+            return user_serializer.dump(user), HTTPStatus.OK
 
 # resets a password and resolves a reset password request
 class PasswordReset(Resource):
     def post(self, challenge):
-        session = DBSession()
+        with DBSession() as session:
 
-        # get the reset request from the database
-        try:
-            resetPassword = session.query(ResetPassword).filter(ResetPassword.challenge == challenge).one()
-            user = session.query(User).filter(User.username == resetPassword.username).one()
-            print(resetPassword)
-        except:
-            session.close()
-            {"errors": "challenge or user not found"}, HTTPStatus.NOT_FOUND
-        
-        # make sure user is verified
-        if(user.verified == False):
-            session.close()
-            return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
+            # get the reset request from the database
+            try:
+                resetPassword = session.query(ResetPassword).filter(ResetPassword.challenge == challenge).one()
+                user = session.query(User).filter(User.username == resetPassword.username).one()
+                
+            except:
+                {"errors": "challenge or user not found"}, HTTPStatus.NOT_FOUND
+            
+            # make sure user is verified
+            if(user.verified == False):
+                return {"errors": "unverified"}, HTTPStatus.UNAUTHORIZED
 
-        # set new password
-        user.password_hash = generate_password_hash(request.get_json()['password'], 10).decode('utf-8')
-        session.delete(resetPassword)
-        session.commit()
-        session.close()
+            # set new password
+            user.password_hash = generate_password_hash(request.get_json()['password'], 10).decode('utf-8')
+            session.delete(resetPassword)
+            session.commit()
 
-        return HTTPStatus.OK
+            return HTTPStatus.OK
 
 class UserPermission(Resource):
     @token_required
     def put(self, user_token, username):
-        # make sure user is verified
-        if(user_token['privilege'] <= 1):
-            return {"errors": "unauthorized"}, HTTPStatus.UNAUTHORIZED
-        
-        # get and return user data
-        session = DBSession()
-        try:
-            user = session.query(User).filter(User.username == username).one()
-        except:
-            session.close()
-            {"errors": "user not found"}, HTTPStatus.NOT_FOUND
-        
-        # set new privilege
-        user.privilege = request.get_json()['privilege'];
-        session.commit()
-        session.close()
+        with DBSession() as session:
+            # make sure user is verified
+            if(user_token['privilege'] <= 1):
+                return {"errors": "unauthorized"}, HTTPStatus.UNAUTHORIZED
+            
+            # get and return user data
+            session = DBSession()
+            try:
+                user = session.query(User).filter(User.username == username).one()
+            except:
+                {"errors": "user not found"}, HTTPStatus.NOT_FOUND
+            
+            # set new privilege
+            user.privilege = request.get_json()['privilege'];
+            session.commit()
 
-        return HTTPStatus.OK
+            return HTTPStatus.OK
 
 
 
