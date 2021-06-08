@@ -23,18 +23,18 @@ class PostList(Resource):
     @token_required
     def post(self, user_token):
         # serialize request
-        try:
-            data = post_serializer.load(request.get_json())
-        except ValidationError as err:
-            return {"errors": err.messages}, HTTPStatus.BAD_REQUEST
+        with DBSession() as session:
+            try:
+                data = post_serializer.load(request.get_json())
+            except ValidationError as err:
+                return {"errors": err.messages}, HTTPStatus.BAD_REQUEST
 
-        # create new Post
-        session = DBSession()
-        post = Post(text=data['text'], title=data['title'], user=user_token['username'])
-        session.add(post)
-        session.commit()
-        # return post to user
-        return post_serializer.dump(post), HTTPStatus.CREATED
+            # create new Post
+            post = Post(text=data['text'], title=data['title'], user=user_token['username'])
+            session.add(post)
+            session.commit()
+            # return post to user
+            return post_serializer.dump(post), HTTPStatus.CREATED
 
 # get all posts belonging to a user
 class PostUser(Resource):
