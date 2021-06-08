@@ -39,7 +39,7 @@ class Post(Base):
     text = Column(String(20), default="post text", nullable=False)
     title = Column(String(250), default="post title", nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)        
-    user = Column(String(20), ForeignKey('user.username'), nullable=False)  
+    user = Column(String(20), ForeignKey(User.username), nullable=False)  
 
 # token blacklist
 class BlackListToken(Base):
