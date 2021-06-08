@@ -68,6 +68,9 @@ class UserAvatar(Resource):
         location = s3.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
         url = "https://%s.s3-%s.amazonaws.com/%s" % (bucket_name, location, key)
 
+        # delete old pfp
+        s3.Object(BUCKET_NAME, profile.avatar.split("/")[-1])
+
         # set pfp
         profile.avatar = url
         session.commit()
