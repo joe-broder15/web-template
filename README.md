@@ -28,4 +28,4 @@ Creates a static build of the frontend and serves it locally from the flask serv
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
+Builds the app for production to the `build` folder.
