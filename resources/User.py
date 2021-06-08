@@ -75,7 +75,7 @@ class UserDetail(Resource):
             try:
                 profile=session.query(UserProfile).filter(UserProfile.username == username).one()
                 user=session.query(User).filter(User.username == user_token['username']).one()
-                posts = session.query(Post).filter(Post.user == user.username)
+                posts = session.query(Post).filter(Post.user == user.username).all()
             except:
                 return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
             
