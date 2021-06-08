@@ -26,7 +26,7 @@ class PostList(Resource):
         try:
             data = post_serializer.load(request.get_json())
         except ValidationError as err:
-            session.close()
+            
             return {"errors": err.messages}, HTTPStatus.BAD_REQUEST
 
         # create new Post
