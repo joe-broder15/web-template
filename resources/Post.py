@@ -14,10 +14,9 @@ post_serializer = PostSchema();
 class PostList(Resource):
     # get list of posts
     def get(self):
-        session = DBSession()
-        posts=session.query(Post).all()
-        session.close()
-        return post_serializer.dump(posts,many=True), HTTPStatus.OK
+        with DBSession() as session:
+            posts=session.query(Post).all()
+            return post_serializer.dump(posts,many=True), HTTPStatus.OK
     
     # create new post
     @token_required
@@ -40,82 +39,72 @@ class PostList(Resource):
 class PostUser(Resource):
     def get(self, username):
         # get posts
-        session = DBSession()
-        try:
-            post=session.query(Post).filter(Post.user == username).all()
-        except:
-            session.close()
-            return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
-        
-        # return serialized posts
-        session.close()
-        return post_serializer.dump(post, many=True), HTTPStatus.OK
+        with DBSession() as session:
+            try:
+                post=session.query(Post).filter(Post.user == username).all()
+            except:
+                return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+            
+            # return serialized posts
+            return post_serializer.dump(post, many=True), HTTPStatus.OK
 
 # get, modify or delete an individual post
 class PostDetail(Resource):
     # get an individual post
     def get(self, post_id):
         # get post
-        session = DBSession()
-        try:
-            post=session.query(Post).filter(Post.id == post_id).one()
-        except:
-            session.close()
-            return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
-        
-        # return serialized post
-        return post_serializer.dump(post), HTTPStatus.OK
+        with DBSession() as session:
+            try:
+                post=session.query(Post).filter(Post.id == post_id).one()
+            except:
+                return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+            
+            # return serialized post
+            return post_serializer.dump(post), HTTPStatus.OK
 
     # update an individual post
     @token_required
     def put(self, post_id, user_token):
         # get post from db
-        session = DBSession()
-        try:
-            post=session.query(Post).filter(Post.id == post_id).one()
-        except:
-            session.close()
-            return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
-        
-        # check if post belongs to the authenticated user
-        if post.user != user_token['username'] and user_token['privilege'] <= 1:
-            session.close()
-            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        
-        # serialize inputs
-        try:
-            data = post_serializer.load(request.get_json())
-        except ValidationError as err:
-            session.close()
-            return {"errors": err.messages}, 422
+        with DBSession() as session:
+            try:
+                post=session.query(Post).filter(Post.id == post_id).one()
+            except:
+                return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+            
+            # check if post belongs to the authenticated user
+            if post.user != user_token['username'] and user_token['privilege'] <= 1:
+                return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+            
+            # serialize inputs
+            try:
+                data = post_serializer.load(request.get_json())
+            except ValidationError as err:
+                return {"errors": err.messages}, 422
 
-        # modify post
-        post.title = data['title']
-        post.text = data['text']
-        session.commit()
-        session.close()
-        # return post
-        return post_serializer.dump(post), HTTPStatus.CREATED
+            # modify post
+            post.title = data['title']
+            post.text = data['text']
+            session.commit()
+            # return post
+            return post_serializer.dump(post), HTTPStatus.CREATED
     
     # delete a post
     @token_required
     def delete(self, post_id, user_token):
 
         # delete post
-        session = DBSession()
-        try:
-            post=session.query(Post).filter(Post.id == post_id).one()
-        except:
-            session.close()
-            return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
-        
-        # check if post belongs to the authenticated user or admin
-        if post.user != user_token['username'] and user_token['privilege'] <= 1:
-            session.close()
-            return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+        with DBSession() as session:
+            try:
+                post=session.query(Post).filter(Post.id == post_id).one()
+            except:
+                return {"errors": "Post Not Found"}, HTTPStatus.NOT_FOUND
+            
+            # check if post belongs to the authenticated user or admin
+            if post.user != user_token['username'] and user_token['privilege'] <= 1:
+                return {"errors": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
-        session.delete(post)
-        session.commit()
-        session.close()
-        # return status
-        return "success", HTTPStatus.OK
+            session.delete(post)
+            session.commit()
+            # return status
+            return "success", HTTPStatus.OK
