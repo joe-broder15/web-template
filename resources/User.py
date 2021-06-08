@@ -74,7 +74,7 @@ class UserDetail(Resource):
         with DBSession() as session:
             try:
                 profile=session.query(UserProfile).filter(UserProfile.username == username).one()
-                user=session.query(User).filter(User.username == user_token['username']).one()
+                user=session.query(User).filter(User.username == username).one()
                 posts = session.query(Post).filter(Post.user == username).all()
             except:
                 return {"errors": "User Not Found"}, HTTPStatus.NOT_FOUND
